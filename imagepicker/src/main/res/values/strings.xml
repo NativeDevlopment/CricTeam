@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="eip_camera">Camera</string>
+    <string name="app_name">Cric Team</string>
+    <string name="eip_gallery">Gallery</string>
+    <string name="eip_remove">Remove</string>
+    <string name="eip_view_full_image">View Full Image</string>
+    <string name="eip_delete_all">Delete All</string>
+    <string name="eip_images">Images:</string>
+    <string name="eip_image_options">Image Options</string>
+    <string name="eip_select_image">Select Image</string>
+
+    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
+    <string name="crop_image_menu_rotate_right">Rotate</string>
+    <string name="crop_image_menu_crop">Crop</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
+    <string name="crop_image_menu_flip_vertically">Flip vertically</string>
+
+    <string name="pick_image_intent_chooser_title">Select source</string>
+</resources>

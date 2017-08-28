@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "439318755717",
+    "firebase_url": "https://idyllic-lotus-177005.firebaseio.com",
+    "project_id": "idyllic-lotus-177005",
+    "storage_bucket": "idyllic-lotus-177005.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439318755717:android:529eb6d51a4dbc73",
+        "android_client_info": {
+          "package_name": "com.cricteam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "439318755717-9tccqgjptqvklafubo3auk5b72ch0k44.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cricteam",
+            "certificate_hash": "a8cdb5cf799f3d6397c78238e230ba5e228f927f"
+          }
+        },
+        {
+          "client_id": "439318755717-lf3h7tlm4vtpn38km7f1ihsms4b9o4a9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZKa1O4QqmzL0xCQVTT4t-W1BD40McenY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "439318755717-lf3h7tlm4vtpn38km7f1ihsms4b9o4a9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

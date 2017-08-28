@@ -1,0 +1,115 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        tools:context="com.cricteam.CreateTeamActivity">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="2dp"
+            app:cardCornerRadius="8dp"
+            android:layout_gravity="center"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/white"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:padding="5dp"
+
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tvLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="Update player"
+                    android:textAppearance="?android:textAppearanceMedium"/>
+
+                    <com.cricteam.imagepicker.ImagePicker
+                        android:id="@+id/ivTeamLogo"
+                        android:layout_below="@+id/tvLabel"
+                        android:layout_centerHorizontal="true"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/tlPlayerName"
+                    android:layout_below="@+id/ivTeamLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etPlayerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:padding="10dp"
+                        android:layout_margin="10dp"
+                        android:maxLines="1"
+                        android:maxLength="100"
+                        android:hint="Please Enter Player Name"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+                </android.support.design.widget.TextInputLayout><android.support.design.widget.TextInputLayout
+                    android:id="@+id/tlPlayerMobileNo"
+                    android:layout_below="@+id/tlPlayerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/etPlayerMobileNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:padding="10dp"
+                        android:layout_margin="10dp"
+                        android:maxLines="1"
+                        android:maxLength="100"
+                        android:hint="Please Enter Player Mobile Name"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+                </android.support.design.widget.TextInputLayout>
+               <Button
+                   android:id="@+id/buttonUpdate"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:textColor="@android:color/white"
+                   android:layout_below="@+id/tlPlayerMobileNo"
+                   android:background="@color/colorPrimaryDark"
+                   android:layout_margin="10dp"
+                   android:text="Update Team Player "/>
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom|end"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-6188430950445846/4647943565"
+            >
+        </com.google.android.gms.ads.AdView>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

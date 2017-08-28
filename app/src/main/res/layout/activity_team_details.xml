@@ -1,0 +1,166 @@
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    >
+    <include layout="@layout/header"/>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        >
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvTeamName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="My eleven"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+                <ImageView
+                    android:id="@+id/ivTeamLogo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/darker_gray"
+                    app:srcCompat="@drawable/ic_person_outline_black_24dp"
+                    android:tooltipText="Player pic"
+                    />
+            <TextView
+                android:id="@+id/tvTeamLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Noida sec 62"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:layout_below="@+id/tvTeamName"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+            <RatingBar
+                style="@style/RatingBar"
+                android:id="@+id/ratingbar"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:layout_width="wrap_content"
+                android:numStars="5"
+                android:rating="3"
+                android:gravity="center_vertical"
+                android:isIndicator="true"
+                android:visibility="visible"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvTeamLocation" />
+            <TextView
+                android:id="@+id/tvTeamMore"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+
+                android:gravity="right"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_alignParentRight="true"
+                android:text="@string/more"
+                android:layout_toRightOf="@+id/ratingbar"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tvTeamLocation" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:text="Player List :"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvPlayerList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@android:color/white"
+            android:text="There is no thing  better  than cricket - and it comes into its own in-play. call Team Owner fix Schudule and Enjoy Cricket.."
+            />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+    <Button
+        android:id="@+id/tv_send_action"
+        android:layout_toRightOf="@+id/tvTeamDistance"
+        android:layout_width="wrap_content"
+        android:text="Want Play"
+        android:gravity="center_vertical|center"
+        android:visibility="visible"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp"
+        android:layout_gravity="center"
+        android:paddingBottom="15dp"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_rect"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvTeamDistance" />
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        app:fabSize="normal"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_phone_black_24dp"
+        android:layout_height="wrap_content" />
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-6188430950445846/2404923606"
+        >
+    </com.google.android.gms.ads.AdView>
+</LinearLayout>
+
+

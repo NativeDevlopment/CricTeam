@@ -1,0 +1,115 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    tools:context="com.cricteam.CreateTeamActivity">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/TvOwenerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text=" Local BCCI"
+                android:layout_toRightOf="@+id/ivOwenerImage"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+                <ImageView
+                    android:id="@+id/ivOwenerImage"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/darker_gray"
+                    app:srcCompat="@drawable/ic_person_outline_black_24dp"
+                    android:tooltipText="Player pic"
+                    />
+            <TextView
+                android:id="@+id/tvOwenerLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Mumbai"
+                android:layout_toRightOf="@+id/ivOwenerImage"
+                android:layout_below="@+id/TvOwenerName"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:text="My Team "
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvTeamList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:text="Do You want to Create Team"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbAddTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="normal"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        app:rippleColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:layout_below="@+id/llPlayerType"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:drawableRight="@drawable/ic_share_black_24dp"
+        android:text="Invite Sports Lover to join App"/>
+
+</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

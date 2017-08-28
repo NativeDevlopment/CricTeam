@@ -1,0 +1,91 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    tools:context="com.cricteam.CreateTeamActivity">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="2dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tlPlayerName"
+                android:layout_below="@+id/flImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etPlayerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:maxLength="100"
+                    android:hint="Please Enter  Name"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tlPlayerMobileNo"
+                android:layout_below="@+id/tlPlayerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etPlayerMobileNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:padding="10dp"
+                    android:imeOptions="actionDone"
+
+                    android:maxLines="1"
+                    android:maxLength="20"
+                    android:hint="Please  Enter Mobile No"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fbAddPlayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/colorPrimaryDark"
+                app:fabSize="normal"
+                android:layout_margin="5dp"
+
+                app:rippleColor="@android:color/white"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_add_black_24dp"
+                android:layout_below="@+id/tlPlayerMobileNo"
+                />
+                         </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+
+
+</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

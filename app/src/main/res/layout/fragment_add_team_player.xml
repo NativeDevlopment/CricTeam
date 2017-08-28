@@ -1,0 +1,211 @@
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    tools:context="com.cricteam.CreateTeamActivity">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tvTeamName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="My eleven"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+                <ImageView
+                    android:id="@+id/ivTeamLogo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/darker_gray"
+                    app:srcCompat="@drawable/ic_person_outline_black_24dp"
+                    android:tooltipText="Player pic"
+                    />
+            <TextView
+                android:id="@+id/tvTeamLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="left"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Noida sec 62"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:layout_below="@+id/tvTeamName"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="2dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tvLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Add Team player"
+                android:textAppearance="?android:textAppearanceMedium"/>
+            <FrameLayout
+                android:layout_width="130dp"
+                android:id="@+id/flImage"
+                android:layout_below="@+id/tvLabel"
+
+                android:layout_centerHorizontal="true"
+                android:layout_height="130dp">
+            <ImageView
+                android:id="@+id/ivPlayerLogo"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:background="@android:color/darker_gray"
+                app:srcCompat="@drawable/ic_person_outline_black_24dp"
+                android:tooltipText="Player pic"
+                />
+
+            </FrameLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tlPlayerName"
+                android:layout_below="@+id/flImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etPlayerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:maxLines="1"
+                    android:maxLength="100"
+                    android:hint="Please Enter Caption Name"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+            </android.support.design.widget.TextInputLayout>
+<LinearLayout
+    android:id="@+id/llPlayerType"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_margin="5dp"
+
+    android:layout_below="@+id/tlPlayerName"
+    android:layout_height="wrap_content">
+<RadioGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+
+    android:orientation="horizontal">
+    <android.support.v7.widget.AppCompatRadioButton
+    android:id="@+id/radioBatsman"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/colorPrimaryDark"
+    android:text="BAT"/>
+    <android.support.v7.widget.AppCompatRadioButton
+        android:id="@+id/radioBowl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="BALL"/>
+    <android.support.v7.widget.AppCompatRadioButton
+        android:id="@+id/radioWicketKeeper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="WK"/>
+</RadioGroup>
+</LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fbAddPlayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/colorPrimaryDark"
+                app:fabSize="normal"
+                android:layout_margin="5dp"
+
+                app:rippleColor="@android:color/white"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_add_black_24dp"
+                android:layout_below="@+id/llPlayerType"
+                />
+            <TextView
+                android:id="@+id/tvTeamPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="right"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Preview"
+                android:layout_alignParentRight="true"
+                android:textAppearance="?android:textAppearanceMedium"/>
+            <TextView
+                android:id="@+id/tvNoOfaddPlayer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="right"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="0/11"
+                android:layout_alignParentLeft="true"
+                android:textAppearance="?android:textAppearanceMedium"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+       >
+    </com.google.android.gms.ads.AdView>
+
+</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

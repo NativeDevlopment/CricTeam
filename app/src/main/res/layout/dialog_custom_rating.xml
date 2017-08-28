@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        app:cardCornerRadius="8dp"
+        android:layout_gravity="center"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvRatingLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Do You want to Rate Team ?"
+                android:layout_toRightOf="@+id/ivTeamLogo"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+                <RatingBar
+                    style="@style/RatingBar"
+                    android:id="@+id/ratingbar"
+                    android:layout_width="wrap_content"
+                    android:numStars="5"
+                    android:layout_below="@+id/tvRatingLabel"
+                    android:rating="3"
+                    android:layout_centerHorizontal="true"
+                    android:isIndicator="false"
+                    android:visibility="visible"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/tvTeamDistance" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/ratingbar"
+                android:textColor="@color/white"
+                android:text="LATTER"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:id="@+id/btLatter"
+                android:layout_margin="10dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btSubmit"
+
+                android:layout_width="match_parent"
+                android:layout_below="@+id/ratingbar"
+                android:textColor="@color/white"
+                android:text="SUBMIT"
+                android:textAppearance="?android:textAppearanceMedium"
+
+                android:layout_toRightOf="@+id/btLatter"
+                android:layout_margin="10dp"
+                android:background="@color/colorPrimaryDark"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
