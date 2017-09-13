@@ -259,13 +259,13 @@ public class AddTeamPlayerFragment extends Fragment {
     private void bottomDialog() {
 
         BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(mContext);
-
+        if(getActivity()!=null){
         View sheetView = getActivity().getLayoutInflater().inflate(R.layout.bottom_sheet_player_list, null);
         RecyclerView recyclerView= sheetView.findViewById(R.id.RecylerListView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(new PlayerPreviewAdapter(mContext,playerList));
         mBottomSheetDialog.setContentView(sheetView);
-        mBottomSheetDialog.show();
+        mBottomSheetDialog.show();}
     }
 
     @Override

@@ -4,21 +4,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.cricteam.CreateTeamActivity;
 import com.cricteam.R;
 import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.listner.OnFragmentInteractionListener;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,6 +93,11 @@ public class FindTeamFragment extends Fragment {
         // Inflate the layout for this fragment
 
         mView= inflater.inflate(R.layout.fragment_find_team, container, false);
+        try {
+            EventBus.getDefault().register(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initializedId();
         setAdapter();
 
@@ -145,7 +158,28 @@ public class FindTeamFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+    @Subscribe
+    public void onEventMainThread( Place place){
+        Log.e("latitude",""+place.getLatLng().latitude);
+        Log.e("longitude",""+place.getLatLng().longitude);
+        Toast.makeText(mContext,"lat" +place.getLatLng(),Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(getActivity() !=null){
+            mListener.onFragmentInteraction(null);
+           /* if (getActivity() instanceof CreateTeamActivity){
+                ((CreateTeamActivity) getActivity()).getAddressAndEnableLocation();
+            }*/
+        }
+    }
 
 
 }
