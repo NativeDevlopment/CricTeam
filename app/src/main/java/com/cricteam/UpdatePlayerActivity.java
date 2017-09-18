@@ -2,6 +2,7 @@ package com.cricteam;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class UpdatePlayerActivity extends AppCompatActivity {
         MobileAds.initialize(this, ADMOB_APP_ID);
         adView=(AdView)findViewById(R.id.adView);
         ivTeamLogo=(ImagePicker)findViewById(R.id.ivTeamLogo);
+        ivTeamLogo.setMainactivity(this);
         buttonUpdate=(Button)findViewById(R.id.buttonUpdate);
         etPlayerMobileNo=(TextInputEditText)findViewById(R.id.etPlayerMobileNo);
         etPlayerName=(TextInputEditText)findViewById(R.id.etPlayerName);
@@ -81,7 +83,7 @@ public class UpdatePlayerActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+     //   super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
 
@@ -96,5 +98,10 @@ public class UpdatePlayerActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

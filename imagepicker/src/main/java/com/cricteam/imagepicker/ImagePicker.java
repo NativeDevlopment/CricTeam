@@ -177,18 +177,18 @@ ImageView addNew;
             @Override
             public void onClick(View view) {
                 if(Build.VERSION.SDK_INT>=23){
-                    if(calledFromFragment){
-                   if(CommonUtils.checkPermissions(fragment.getActivity())) {
-                       dispatchTakePictureIntent();
+                    if(calledFromFragment) {
+                        if (CommonUtils.checkPermissions(fragment.getActivity())) {
+                            dispatchTakePictureIntent();
                         }
-
+                    }
                 else {
                         if(CommonUtils.checkPermissions(mainactivity)) {
                             dispatchTakePictureIntent();
                         }
 
                     }
-                    }
+
                 }   else
                  {
                 dispatchTakePictureIntent();}
@@ -206,7 +206,7 @@ ImageView addNew;
                                 fragment.startActivityForResult(pickPhoto, REQUEST_GALLERY);
                             }else{
                                 mainactivity.startActivityForResult(pickPhoto, REQUEST_GALLERY);
-                            }                        }
+                            }                        }}
 
                         else {
                             if(CommonUtils.checkPermissions(mainactivity)) {
@@ -218,7 +218,7 @@ ImageView addNew;
                                 }                            }
 
                         }
-                    }
+
                 }   else
                 {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
