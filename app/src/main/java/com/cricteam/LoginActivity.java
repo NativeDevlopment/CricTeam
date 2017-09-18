@@ -180,12 +180,13 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
                 }
                 break;
             case R.id.fbNext:
-                if(!etMobileNo.getText().toString().equalsIgnoreCase("")&&etMobileNo.getText().toString().length()==10)
-                {  intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
-
-                startActivity(intent);}
-                else
-                    Snackbar.make(etMobileNo,"Please Enter 10 digit Mobile No",Snackbar.LENGTH_SHORT).show();
+                if(!etMobileNo.getText().toString().equalsIgnoreCase("")&& etMobileNo.getText().toString().length()==10) {
+                    intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
+                    startActivity(intent);
+                }else if (etMobileNo.getText().toString().length()<10){
+                    Snackbar.make(etMobileNo,"Please enter the actual mobile number.",Snackbar.LENGTH_SHORT).show();
+                } else
+                    Snackbar.make(etMobileNo,"Please entered your mobile number.",Snackbar.LENGTH_SHORT).show();
                 break;
         }
     }
