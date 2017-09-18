@@ -208,12 +208,12 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
             case R.id.fbVerifyOtp:
                 if(!etOtpNo.getText().toString().equalsIgnoreCase("")&&etOtpNo.getText().toString().length()==6){
                     PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, etOtpNo.getText().toString());
-             signInWithPhoneAuthCredential(credential);
+                    signInWithPhoneAuthCredential(credential);
                     startActivity(new Intent(OtpVerifyActivity.this,CreateTeamActivity.class));
                     finishAffinity();
-                  }
+                }
                 else {
-                    Snackbar.make(etOtpNo,"Please Enter 6 Digit OTP NO",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(etOtpNo,"Please enter Otp which you received.",Snackbar.LENGTH_LONG).show();
                 }
                 break;
         }

@@ -1,6 +1,9 @@
 package com.cricteam;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.google.firebase.FirebaseApp;
 
@@ -13,5 +16,13 @@ public class CricTeamApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
