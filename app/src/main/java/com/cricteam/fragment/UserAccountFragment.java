@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -122,6 +123,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         initializedId();
         fbSaveUser.setOnClickListener(this);
         tv_user_address.setOnClickListener(this);
+        tv_user_address.setCompoundDrawablesWithIntrinsicBounds(AppCompatResources.getDrawable(mContext, R.drawable.ic_place_black_24dp), null, null, null);
         ivUserPics.setOnClickListener(this);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference("user");

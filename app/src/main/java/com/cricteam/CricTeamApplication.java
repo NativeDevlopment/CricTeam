@@ -12,11 +12,14 @@ import com.google.firebase.FirebaseApp;
  */
 
 public class CricTeamApplication extends Application {
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
     }
 

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +52,7 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
     private View fbVerifyOtp;
     private Toolbar toolbar;
     private TextView titleHeader;
-    private TextView tvMobileNO;
+    private TextView tvMobileNO,tvLabel;
     private EditText etOtpNo;
     private TextView tvResendCode;
     private TextView tvTimer;
@@ -70,6 +71,8 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
         setContentView(R.layout.activity_verify_otp);
         fbVerifyOtp = findViewById(R.id.fbVerifyOtp);
         tvMobileNO = (TextView) findViewById(R.id.tvMobileNO);
+        tvLabel = (TextView) findViewById(R.id.tvLabel);
+        tvMobileNO.setCompoundDrawablesWithIntrinsicBounds(null,null, AppCompatResources.getDrawable(this, R.drawable.ic_edit_black_24dp),null);
         tvResendCode = (TextView) findViewById(R.id.tvResendCode);
         setenableResendButton(false);
         tvTimer = (TextView) findViewById(R.id.tvTimer);

@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.cricteam.R;
 import com.cricteam.TeamDetailsActivity;
 import com.cricteam.TeamUpdateActivity;
+import com.cricteam.model.MyTeam;
+
+import java.util.List;
 
 /**
  * Created by Amar on 8/15/2017.
@@ -19,9 +22,11 @@ import com.cricteam.TeamUpdateActivity;
 
 public class MyTeamAdapter extends RecyclerView.Adapter<MyTeamAdapter.MyViewHolder> {
     private final Context mContext;
+    private List<MyTeam> myTeamList;
 
-    public MyTeamAdapter(Context context){
+    public MyTeamAdapter(Context context, List<MyTeam> myTeamList){
         this.mContext=context;
+        this.myTeamList= myTeamList;
     }
     @Override
     public MyTeamAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,12 +36,12 @@ public class MyTeamAdapter extends RecyclerView.Adapter<MyTeamAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyTeamAdapter.MyViewHolder holder, int position) {
-holder.itemView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        mContext.startActivity(new Intent(mContext, TeamUpdateActivity.class));
-    }
-});
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent(mContext, TeamUpdateActivity.class));
+            }
+        });
     }
 
     @Override

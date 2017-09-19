@@ -27,4 +27,7 @@
     <string name="resend"><u>RESEND</u></string>
     <string name="_20_ratings_3_reviews">20 ratings 3 review</string>
     <string name="skip"><u>Skip</u></string>
+    <string name="invite_sports_lover_to_join_app">Invite Sports Lover to join App</string>
+    <string name="do_you_want_to_create_team">Do You want to Create Team</string>
+    <string name="my_team">My Team</string>
 </resources>

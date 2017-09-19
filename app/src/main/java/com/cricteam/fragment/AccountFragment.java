@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.cricteam.CreateTeamActivity;
 import com.cricteam.R;
@@ -20,7 +21,11 @@ import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.adapter.MyTeamAdapter;
 import com.cricteam.adapter.PlayerAdapter;
 import com.cricteam.listner.OnFragmentInteractionListener;
+import com.cricteam.model.MyTeam;
 import com.cricteam.utils.AppConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.cricteam.R.id.rvPlayerList;
 
@@ -46,11 +51,11 @@ public class AccountFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-
     private Context mContext;
     private RecyclerView rvTeamList;
     private FloatingActionButton fbAddTeam;
+    private TextView tvCreateTeam,tvMyTeam;
+    private List<MyTeam> myTeamList;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -92,11 +97,24 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
 
         mView= inflater.inflate(R.layout.fragment_account, container, false);
+        myTeamList = new ArrayList<>();
         initializedId();
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvTeamList.setLayoutManager(linearLayoutManager);
-        rvTeamList.setAdapter(new MyTeamAdapter(mContext));
+        rvTeamList.setAdapter(new MyTeamAdapter(mContext,myTeamList));
+        if (myTeamList.size()>0){
+            rvTeamList.setVisibility(View.VISIBLE);
+            tvMyTeam.setVisibility(View.VISIBLE);
+            tvCreateTeam.setVisibility(View.GONE);
+            fbAddTeam.setVisibility(View.GONE);
+        }else{
+            rvTeamList.setVisibility(View.GONE);
+            tvMyTeam.setVisibility(View.GONE);
+            tvCreateTeam.setVisibility(View.VISIBLE);
+            fbAddTeam.setVisibility(View.VISIBLE);
+        }
+
         fbAddTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +134,8 @@ public class AccountFragment extends Fragment {
     private void initializedId() {
         fbAddTeam=(FloatingActionButton)mView.findViewById(R.id.fbAddTeam);
         rvTeamList=(RecyclerView)mView.findViewById(R.id.rvTeamList);
+        tvCreateTeam=(TextView) mView.findViewById(R.id.tvCreateTeam);
+        tvMyTeam=(TextView) mView.findViewById(R.id.tvMyTeam);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

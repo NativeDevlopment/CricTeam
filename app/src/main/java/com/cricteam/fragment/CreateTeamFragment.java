@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.content.res.AppCompatResources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,11 +107,6 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
 
         mView= inflater.inflate(R.layout.fragment_create_team, container, false);
         initializedId();
-
-
-
-
-
         fbNext.setOnClickListener(this);
          tvlocation.setOnClickListener(this);
         titleSkip.setOnClickListener(this);
@@ -157,6 +153,8 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
     private void initializedId() {
         fbNext=(FloatingActionButton)mView.findViewById(R.id.fbNext);
         tvlocation=(TextView)mView.findViewById(R.id.tvlocation);
+        tvlocation.setCompoundDrawablesWithIntrinsicBounds( null, null,AppCompatResources.getDrawable(mContext, R.drawable.ic_add_location_black_24dp), null);
+
         etAboutTeam=(TextInputEditText)mView.findViewById(R.id.etAboutTeam);
         etTeamName=(TextInputEditText)mView.findViewById(R.id.etTeamName);
         ivTeamLogo=(ImagePicker)mView.findViewById(R.id.ivTeamLogo);

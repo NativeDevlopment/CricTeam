@@ -153,7 +153,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tvYourlocation"
-                        android:drawableLeft="@drawable/ic_place_black_24dp"
                         android:gravity="left|center_vertical"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
