@@ -124,7 +124,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         tv_user_address.setOnClickListener(this);
         ivUserPics.setOnClickListener(this);
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference("user").child("6IH4hi8YrfYo0HLpW8mt8Dhk6y93");
+        storageRef = storage.getReference("user");
 
         return mView;
     }

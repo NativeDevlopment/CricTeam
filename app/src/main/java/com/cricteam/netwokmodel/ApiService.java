@@ -7,6 +7,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 
@@ -26,7 +27,7 @@ public interface ApiService {
      * @return the otp
      */
     @GET("sendOtp")
-    Call<Response> sendOtp(@Path("mobileNo") int mobileNo);
+    Call<Response> sendOtp(@Query("mobileNo") String mobileNo);
 
     @POST("veryifyOtp")
     Call<Response> verifyOtp(@Body VerifyOtp  verifyOtp);

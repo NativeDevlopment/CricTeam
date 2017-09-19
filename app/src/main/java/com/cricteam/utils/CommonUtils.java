@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -286,5 +288,22 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return gpsEnabled;
+    }
+
+    /**
+     * Is online boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isOnline(Context context) {
+        ConnectivityManager conMgr = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if (netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()) {
+            return false;
+        }
+        return true;
     }
 }

@@ -36,6 +36,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cricteam.listner.OnApiResponse;
+import com.cricteam.netwokmodel.APIExecutor;
+import com.cricteam.netwokmodel.ApiService;
+import com.cricteam.netwokmodel.NetWorkApiCall;
+import com.cricteam.netwokmodel.Response;
 import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
 import com.cricteam.utils.Country;
@@ -164,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
 
     @Override
     public void onClick(View view) {
-        Intent intent=   new Intent(this,OtpVerifyActivity.class);
+
         switch (view.getId()){
             case R.id.tvCountryCode:
                 try {
@@ -181,8 +186,15 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
                 break;
             case R.id.fbNext:
                 if(!etMobileNo.getText().toString().equalsIgnoreCase("")&& etMobileNo.getText().toString().length()==10) {
-                    intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
-                    startActivity(intent);
+                    NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(etMobileNo.getText().toString().trim()), new OnApiResponse() {
+                        @Override
+                        public void onResponse(Response response) {
+                            Intent intent=   new Intent(LoginActivity.this,OtpVerifyActivity.class);
+                            intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
+                            startActivity(intent);
+                        }
+                    });
+
                 }else if (etMobileNo.getText().toString().length()<10){
                     Snackbar.make(etMobileNo,"Please enter the actual mobile number.",Snackbar.LENGTH_SHORT).show();
                 } else

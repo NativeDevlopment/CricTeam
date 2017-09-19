@@ -2,6 +2,8 @@ package com.cricteam.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.cricteam.R;
 import com.cricteam.TeamDetailsActivity;
+import com.cricteam.utils.TextDrawable;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
@@ -60,12 +63,19 @@ public class FindTeamAdapter extends RecyclerView.Adapter<FindTeamAdapter.MyView
     public void onBindViewHolder(final FindTeamAdapter.MyViewHolder holder, int position) {
         switch (getItemViewType(position)){
             case NORMAL_VIEW:
+
                 if(position==2){
                     holder.tv_send_action.setText("Team Invited");
                 }
                 if(position==5){
                     holder.tv_send_action.setText("Call Team");
                 }
+                TextDrawable drawable = TextDrawable.builder()
+                        .beginConfig()
+                        .withBorder(4) /* thickness in px */
+                        .endConfig()
+                        .buildRoundRect("A", ContextCompat.getColor(mContext,R.color.colorPrimary), 10);
+                holder.ivTeamLogo.setImageDrawable(drawable);
                 break;
             case  ADD_VIEW:
                 // Set its video options.
@@ -165,12 +175,14 @@ holder.itemView.setOnClickListener(new View.OnClickListener() {
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_send_action;
+        private final ImageView ivTeamLogo;
         private  NativeExpressAdView adView;
         private  CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             tv_send_action= (TextView)itemView.findViewById(R.id.tv_send_action);
+            ivTeamLogo= (ImageView)itemView.findViewById(R.id.ivTeamLogo);
             cardView= (CardView)itemView.findViewById(R.id.cardView);
             adView= (NativeExpressAdView)itemView.findViewById(R.id.adView);
         }

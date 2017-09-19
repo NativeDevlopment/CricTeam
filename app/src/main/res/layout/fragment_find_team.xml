@@ -6,11 +6,27 @@
     android:layout_gravity="center"
     android:background="@color/colorPrimary"
     tools:context="com.cricteam.CreateTeamActivity">
+    <android.support.v4.widget.SwipeRefreshLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:id="@+id/recyclerFindTeam"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent">
 
+    </android.support.v7.widget.RecyclerView>
 
-
+</android.support.v4.widget.SwipeRefreshLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|end"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        >
+    </com.google.android.gms.ads.AdView>
 </FrameLayout>

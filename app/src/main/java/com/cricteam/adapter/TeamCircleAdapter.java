@@ -41,7 +41,7 @@ public class TeamCircleAdapter extends RecyclerView.Adapter<TeamCircleAdapter.My
     }
     @Override
     public TeamCircleAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_team,parent,false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_team_circle,parent,false);
 
         switch (viewType)
         {
@@ -57,7 +57,6 @@ public class TeamCircleAdapter extends RecyclerView.Adapter<TeamCircleAdapter.My
     public void onBindViewHolder(final TeamCircleAdapter.MyViewHolder holder, int position) {
         switch (getItemViewType(position)){
             case NORMAL_VIEW:
-                holder.tv_send_action.setText("Team Invited");
                 break;
             case  ADD_VIEW:
                 // Set its video options.
@@ -120,13 +119,11 @@ holder.itemView.setOnClickListener(new View.OnClickListener() {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private  TextView tv_send_action;
         private  NativeExpressAdView adView;
         private  CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            tv_send_action= (TextView)itemView.findViewById(R.id.tv_send_action);
             cardView= (CardView)itemView.findViewById(R.id.cardView);
             adView= (NativeExpressAdView)itemView.findViewById(R.id.adView);
         }
