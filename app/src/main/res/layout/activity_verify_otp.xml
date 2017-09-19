@@ -29,7 +29,7 @@
                 android:padding="10dp"
                 android:gravity="center"
                 android:textColor="@color/colorPrimaryDark"
-                android:text="Otp has been sent to your mobile number "
+                android:text="@string/otp_has_been_sent_to_your_mobile_number"
                 android:textAppearance="?android:textAppearanceMedium"/>
             <TextView
                 android:id="@+id/tvMobileNO"

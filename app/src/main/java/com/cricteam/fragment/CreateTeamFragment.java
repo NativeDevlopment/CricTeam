@@ -162,7 +162,7 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
         titleSkip.setVisibility(View.VISIBLE);
         ivTeamLogo.setFragment(this);
         titleHeader=(TextView) mView. findViewById(R.id.titleHeader);
-        titleHeader.setText("Create Team");
+        titleHeader.setText(R.string.create_team);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
