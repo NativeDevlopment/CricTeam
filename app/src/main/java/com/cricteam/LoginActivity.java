@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        setHeader();
+      //  setHeader();
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
         SettingLocationOn(this);
@@ -186,14 +186,19 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
                 break;
             case R.id.fbNext:
                 if(!etMobileNo.getText().toString().equalsIgnoreCase("")&& etMobileNo.getText().toString().length()==10) {
-                    NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(etMobileNo.getText().toString().trim()), new OnApiResponse() {
+                    /*NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(etMobileNo.getText().toString().trim()), new OnApiResponse() {
                         @Override
                         public void onResponse(Response response) {
                             Intent intent=   new Intent(LoginActivity.this,OtpVerifyActivity.class);
                             intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
                             startActivity(intent);
                         }
-                    });
+                    });*/
+
+                    Intent intent=   new Intent(LoginActivity.this,OtpVerifyActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
+                    startActivity(intent);
 
                 }else if (etMobileNo.getText().toString().length()<10){
                     Snackbar.make(etMobileNo,"Please enter the actual mobile number.",Snackbar.LENGTH_SHORT).show();

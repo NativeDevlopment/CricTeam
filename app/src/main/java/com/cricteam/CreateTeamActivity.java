@@ -43,10 +43,7 @@ import org.greenrobot.eventbus.EventBus;
 
 public class CreateTeamActivity extends AppCompatActivity implements OnFragmentInteractionListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener
-
-
-{
+        GoogleApiClient.OnConnectionFailedListener{
     private static final int PERMISSION_LOCATION_REQUEST_CODE = 100;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -92,13 +89,13 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
     }
 
 
-   @Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult()", Integer.toString(resultCode));
-       for (int i = 0; i <getSupportFragmentManager().getFragments().size() ; i++) {
-           Log.e("fragment list", getSupportFragmentManager().getFragments().get(i).getClass().getName());
-       }
+        for (int i = 0; i <getSupportFragmentManager().getFragments().size() ; i++) {
+            Log.e("fragment list", getSupportFragmentManager().getFragments().get(i).getClass().getName());
+        }
         //final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
         switch (requestCode) {
             case REQUEST_LOCATION:
@@ -159,7 +156,7 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
                 //final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                       getPlaceLocation();
+                        getPlaceLocation();
 
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
@@ -211,9 +208,9 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
             @Override
             public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
                 if(likelyPlaces.getCount()>0){
-                Log.e("location address",""+likelyPlaces.get(0).getPlace().getAddress());
-                EventBus.getDefault().post(likelyPlaces.get(0).getPlace());
-                likelyPlaces.release();}
+                    Log.e("location address",""+likelyPlaces.get(0).getPlace().getAddress());
+                    EventBus.getDefault().post(likelyPlaces.get(0).getPlace());
+                    likelyPlaces.release();}
             }
         });
     }

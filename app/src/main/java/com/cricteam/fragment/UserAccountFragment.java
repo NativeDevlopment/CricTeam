@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.cricteam.R;
 import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.imagepicker.ImagePicker;
 import com.cricteam.listner.OnFragmentInteractionListener;
+import com.cricteam.utils.CommonUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.games.event.Event;
@@ -203,9 +205,19 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fbSaveUser:
-                saveImageToCloud();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, CreateTeamFragment.newInstance(mParam1, "")).addToBackStack(null).commit();
-
+                if(et_name.getText().toString().trim().isEmpty()){
+                    et_name.requestFocus();
+                    Snackbar.make(et_Email,"Please enter the name input field.",Snackbar.LENGTH_SHORT).show();
+                }else if( et_Email.getText().toString().trim().isEmpty()){
+                    et_Email.requestFocus();
+                    Snackbar.make(et_Email,"Please enter the email id",Snackbar.LENGTH_SHORT).show();
+                }else if(!CommonUtils.isValidEmail(et_Email.getText().toString().trim())){
+                    et_Email.requestFocus();
+                    Snackbar.make(et_Email,"Please enter the correct email id",Snackbar.LENGTH_SHORT).show();
+                }else {
+                    saveImageToCloud();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, CreateTeamFragment.newInstance(mParam1, "")).addToBackStack(null).commit();
+                }
                 break;
             case R.id.tv_user_address:
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();

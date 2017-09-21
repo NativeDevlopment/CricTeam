@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Patterns;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -306,4 +307,11 @@ public class CommonUtils {
         }
         return true;
     }
+
+    /*check the Email id pattern*/
+
+    public static boolean isValidEmail(CharSequence target) {
+        return target != null && Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
 }

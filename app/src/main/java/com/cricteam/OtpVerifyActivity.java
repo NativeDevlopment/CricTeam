@@ -82,13 +82,13 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
         tvResendCode.setOnClickListener(this);
         otpCountDownTimer = new OtpCountDownTimer(30000, 1000);
         otpCountDownTimer.start();
-        setHeader();
+        //setHeader();
         if (getIntent().getStringExtra(AppConstants.MOBILE_NO) != null) {
             tvMobileNO.setText(getIntent().getStringExtra(AppConstants.MOBILE_NO));
            mobileNo=getIntent().getStringExtra(AppConstants.MOBILE_NO).replace("-","");
         }
 
-         mAuth= FirebaseAuth.getInstance();
+        mAuth= FirebaseAuth.getInstance();
         mCallbacks= new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
