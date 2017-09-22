@@ -7,16 +7,19 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +32,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.cricteam.imagepicker.utils.CropImage;
+import com.cricteam.imagepicker.utils.TakePictureUtils;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,24 +85,61 @@ ImageView addNew;
         });
 
     }
+
+    public Uri setCropImage(String croppath) {
+
+
+            File f = new File(croppath);
+        Uri path = Uri.fromFile(f);
+            Glide.with(getContext()).load(path).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
+
+
+
+        Log.e("path",path.toString());
+
+        return path;
+    }
     public Uri setImage(Intent imageReturnedIntent) {
         Uri path;
         if(imageReturnedIntent!=null) {
              path = imageReturnedIntent.getData();
-            Glide.with(getContext()).load(path).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
+          //  Glide.with(getContext()).load(path).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
+            if(calledFromFragment){
+                startCropImage(fragment.getActivity(),getRealPathFromURI(path));
 
+            }else{
+                startCropImage(fragment.getActivity(),getRealPathFromURI(path));
+            }
 
         }else{
             File f = new File(mCurrentPhotoPath);
              path = Uri.fromFile(f);
-            Glide.with(getContext()).load(path).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
+           // Glide.with(getContext()).load(path).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
 
+            if(calledFromFragment){
+                startCropImage(fragment.getActivity(),mCurrentPhotoPath);
 
+            }else{
+                startCropImage(fragment.getActivity(),mCurrentPhotoPath);
+            }
         }
+        Log.e("path",path.toString());
 
         return path;
     }
-
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
     public void setMainactivity(Activity mainactivity) {
         this.mainactivity = mainactivity;
         this.calledFromFragment = false;
@@ -228,14 +271,24 @@ ImageView addNew;
                         mainactivity.startActivityForResult(pickPhoto, REQUEST_GALLERY);
                     }                }
                 mBottomSheetDialog.dismiss();
-
-
-
-
                 mBottomSheetDialog.dismiss();
             }
         });
         mBottomSheetDialog.show();
     }
+
+    public void startCropImage(@NonNull Activity context, @NonNull String filePath) {
+        Intent intent = new Intent(context, CropImage.class);
+        File storageDir = mainactivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        intent.putExtra(CropImage.IMAGE_PATH, filePath);
+        intent.putExtra(CropImage.SCALE, true);
+        intent.putExtra(CropImage.ASPECT_X, 0);
+        intent.putExtra(CropImage.ASPECT_Y, 0);
+        intent.putExtra(CropImage.OUTPUT_X, 200);
+        intent.putExtra(CropImage.OUTPUT_Y, 200);
+        context.startActivityForResult(intent, TakePictureUtils.CROP_FROM_CAMERA);
+    }
+
 
 }

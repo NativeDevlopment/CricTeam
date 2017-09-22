@@ -25,6 +25,8 @@ import android.widget.Toast;
 import com.cricteam.R;
 import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.imagepicker.ImagePicker;
+import com.cricteam.imagepicker.utils.CropImage;
+import com.cricteam.imagepicker.utils.TakePictureUtils;
 import com.cricteam.listner.OnFragmentInteractionListener;
 import com.cricteam.utils.CommonUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -152,14 +154,27 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
             case ImagePicker.REQUEST_CAMERA:
                 if (resultCode == Activity.RESULT_OK) {
 
-               image=      ivUserPics.setImage(data);
+                    image = ivUserPics.setImage(data);
                 }
                 break;
             case ImagePicker.REQUEST_GALLERY:
                 if (resultCode == Activity.RESULT_OK) {
-                    image=  ivUserPics.setImage(data);
+                    image = ivUserPics.setImage(data);
                 }
                 break;
+
+            case TakePictureUtils.CROP_FROM_CAMERA:
+                if (resultCode == Activity.RESULT_OK) {
+                    String path = null;
+                    if (data != null) {
+                        path = data.getStringExtra(CropImage.IMAGE_PATH);
+                        image = ivUserPics.setCropImage(path);
+                    }
+                    if (path == null) {
+                        Log.e("Path null ", path);
+                        return;
+                    }
+                }
         }
     }
 
