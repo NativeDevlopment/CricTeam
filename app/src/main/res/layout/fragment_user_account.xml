@@ -8,7 +8,17 @@
     android:background="@color/colorPrimary"
     >
     <include layout="@layout/header"/>
-
+<TextView
+    android:id="@+id/textLabel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:textColor="@android:color/black"
+    android:padding="2dp"
+    android:visibility="invisible"
+    android:gravity="center"
+    android:textAppearance="?android:textAppearanceSmall"
+    android:text="Fetching Device Current Location.."/>
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

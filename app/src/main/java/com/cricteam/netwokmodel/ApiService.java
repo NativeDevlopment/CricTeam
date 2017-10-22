@@ -1,6 +1,8 @@
 package com.cricteam.netwokmodel;
 
 
+import java.util.Map;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,7 +34,7 @@ public interface ApiService {
     @POST("veryifyOtp")
     Call<Response> verifyOtp(@Body VerifyOtp  verifyOtp);
     @POST("updateUser")
-    Call<Response> updateUser(@Body UserDetails  userDetails);
+    Call<Response> updateUser(@Body UserDetailsRequest  userDetails);
     @POST("saveTeam")
     Call<Response> saveTeam(@Body TeamRequest  teamRequest);
     @POST("addPlayers")
@@ -42,14 +44,16 @@ public interface ApiService {
     @POST("teamRequest")
     Call<Response> sendTeamCircleRequest(@Body TeamCircleRequest  teamCircleRequest);
     @POST("findTeam")
-    Call<Response> findTeam(@Body FindTeamRequest  findTeamRequest , QueryMap pageMap);
+    Call<Response> findTeam(@Body FindTeamRequest  findTeamRequest , @QueryMap Map<String, Integer>  pageMap);
     @POST("findTeamCircle")
-    Call<Response> findTeamCircle(@Body FindTeamRequest  findTeamRequest , QueryMap pageMap);
+    Call<Response> findTeamCircle(@Body FindTeamRequest  findTeamRequest ,  @QueryMap Map<String, Integer> pageMap);
+    @POST("findTeamRequest")
+    Call<Response> findTeamRequest(@Body FindTeamRequest  findTeamRequest ,  @QueryMap Map<String, Integer> pageMap);
     @GET("getUser")
-    Call<Response> getUser(@Path("userId")int userId);
+    Call<Response> getUser(@Query("userId")int userId);
     /*http://localhost:8181/getTeamDetails?teamId=1&userId=1&ownTeamId=2*/
     @GET("getTeamDetails")
-    Call<Response> getTeamDetails(QueryMap teamids);
+    Call<Response> getTeamDetails(@QueryMap Map<String, Integer>  pageMap);
 
 
 

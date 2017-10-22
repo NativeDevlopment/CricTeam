@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
 import com.google.firebase.FirebaseApp;
 
@@ -19,11 +20,21 @@ public class SplashActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
         if (CommonUtils.checkPermissions(this)) {
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if(CommonUtils.getPreferences(SplashActivity.this, AppConstants.USER_ID).equalsIgnoreCase("")){
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    finish();
+
+                    finish();}
+                   else if(!CommonUtils.getPreferences(SplashActivity.this, AppConstants.USER_ID).equalsIgnoreCase("") &&CommonUtils.getPreferencesBoolean(SplashActivity.this,AppConstants.IS_COMPLETE_USER) ){
+                        startActivity(new Intent(SplashActivity.this, DashBordActivity.class));
+                        finish();
+                    }else{
+                        startActivity(new Intent(SplashActivity.this, CreateTeamActivity.class));
+                        finish();
+                    }
                 }
             }, SPLASH_TIME);
         }

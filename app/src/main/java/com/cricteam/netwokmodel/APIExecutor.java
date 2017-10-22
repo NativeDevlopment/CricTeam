@@ -22,7 +22,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIExecutor {
 
 
-private  static String BaseURL="http://192.168.88.101:8181/";
+private  static String BaseURL="http://192.168.88.100:8181/";
+//private  static String BaseURL="http://192.168.42.115:8181/";
 
     /**
      * Gets api service.

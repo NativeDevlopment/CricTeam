@@ -213,13 +213,20 @@ public class SearchTeam {
 	
 	private String teamLogoUrl;
 	private String teamCircleStatus;
-	 
-	
-	
+	private boolean isAddView;
+
+	public boolean isAddView() {
+		return isAddView;
+	}
+
+	public void setAddView(boolean addView) {
+		isAddView = addView;
+	}
+
 	@Override
 	public String toString(){
 		 return "{teamId:" + teamId + ", userId:" + userId + ", teamName:"
 				+ teamName + ", teamDesc:" + teamDesc + ", teamLat:" 
-				+ teamLat + ", teamAddress:" + teamAddress + ", teamLong:"+ teamLong +", teamLogoUrl:" + teamLogoUrl+", teamCircleStatus:" + teamCircleStatus +", distance: "+distance+"}";
+				+ teamLat + ", teamAddress:" + teamAddress+", isAddView:" + isAddView + ", teamLong:"+ teamLong +", teamLogoUrl:" + teamLogoUrl+", teamCircleStatus:" + teamCircleStatus +", distance: "+distance+"}";
 	}
 }

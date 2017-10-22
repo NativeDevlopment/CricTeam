@@ -11,6 +11,7 @@ import android.widget.RatingBar;
 import com.cricteam.R;
 import com.cricteam.UpdatePlayerActivity;
 import com.cricteam.model.Player;
+import com.cricteam.netwokmodel.PlayerDetails;
 import com.cricteam.utils.AppConstants;
 
 import java.util.Collection;
@@ -23,11 +24,11 @@ import java.util.List;
 
 public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.MyViewHolder> {
     private final Context mContext;
-    List<Player> playerList= Collections.emptyList();
+    List<PlayerDetails> playerList= Collections.emptyList();
 
-    public PlayerAdapter(Context context, List<Player> playerList){
+    public PlayerAdapter(Context context, List<PlayerDetails> playerDetailsList){
         this.mContext=context;
-        this.playerList=playerList;
+        this.playerList=playerDetailsList;
     }
     @Override
     public PlayerAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

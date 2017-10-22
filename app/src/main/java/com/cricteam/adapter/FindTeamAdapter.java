@@ -1,6 +1,8 @@
 package com.cricteam.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
@@ -16,8 +18,20 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cricteam.R;
 import com.cricteam.TeamDetailsActivity;
+import com.cricteam.fragment.CreateTeamFragment;
+import com.cricteam.listner.OnApiResponse;
+import com.cricteam.netwokmodel.APIExecutor;
+import com.cricteam.netwokmodel.NetWorkApiCall;
+import com.cricteam.netwokmodel.Response;
+import com.cricteam.netwokmodel.SearchTeam;
+import com.cricteam.netwokmodel.TeamCircle;
+import com.cricteam.netwokmodel.TeamCircleRequest;
+import com.cricteam.netwokmodel.UserDetails;
+import com.cricteam.utils.AppConstants;
+import com.cricteam.utils.CommonUtils;
 import com.cricteam.utils.TextDrawable;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
@@ -29,8 +43,11 @@ import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
+import com.google.gson.Gson;
 
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * Created by Amar on 8/15/2017.
@@ -38,13 +55,16 @@ import java.util.List;
 
 public class FindTeamAdapter extends RecyclerView.Adapter<FindTeamAdapter.MyViewHolder> {
     private static final String ADMOB_APP_ID = "ca-app-pub-6188430950445846~6237245453";
-
     private final Context mContext;
     private final int NORMAL_VIEW=0;
     private final int ADD_VIEW=1;
-    public  FindTeamAdapter (Context context){
+    private final int PROGRESS_VIEW=2;
+    private final List<SearchTeam> searcheTeams;
+
+    public  FindTeamAdapter (Context context , List<SearchTeam> searchTeams){
         this.mContext=context;
         MobileAds.initialize(mContext, ADMOB_APP_ID);
+        this.searcheTeams=searchTeams;
     }
     @Override
     public FindTeamAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -55,30 +75,78 @@ public class FindTeamAdapter extends RecyclerView.Adapter<FindTeamAdapter.MyView
             case NORMAL_VIEW:
         return new MyViewHolder(rowView);
             case ADD_VIEW :
-                rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add_view,parent,false);
+                 rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add_view,parent,false);
+               // new MyViewHolder(rowView);
+                break;
+            case PROGRESS_VIEW:
+                rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_progress,parent,false);
+break;
         }
         return new MyViewHolder(rowView);
     }
 
     @Override
-    public void onBindViewHolder(final FindTeamAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final FindTeamAdapter.MyViewHolder holder, final int position) {
         switch (getItemViewType(position)){
             case NORMAL_VIEW:
-
-                if(position==2){
-                    holder.tvTeamDistance.setCompoundDrawablesWithIntrinsicBounds(AppCompatResources.getDrawable(mContext, R.drawable.ic_add_location_black_24dp),null,null,null);
-
-                    holder.tv_send_action.setText("Team Invited");
+                holder.tvTeamDistance.setCompoundDrawablesWithIntrinsicBounds(AppCompatResources.getDrawable(mContext, R.drawable.ic_place_black_24dp),null,null,null);
+                holder.tvTeamName.setText(searcheTeams.get(position).getTeamName());
+                holder.tvTeamLocation.setText(searcheTeams.get(position).getTeamAddress());
+                holder.tv_send_action.setText(searcheTeams.get(position).getTeamCircleStatus());
+                if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("SEND")){
+                    holder.tv_send_action.setText("INVITED");
+                }else{
+                    holder.tv_send_action.setText("WANT PLAY");
                 }
-                if(position==5){
-                    holder.tv_send_action.setText("Call Team");
+               /* if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("Want Play")){
+                    holder.tv_send_action.setText(searcheTeams.get(position).getTeamCircleStatus());
+                }else if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("RECEIVED")){
+                    holder.tv_send_action.setText(searcheTeams.get(position).getTeamCircleStatus());
+
+                }else if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("REJECT")){
+                    holder.tv_send_action.setText(searcheTeams.get(position).getTeamCircleStatus());
+
+                }else if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("ACCEPT")){
+                    holder.tv_send_action.setText(searcheTeams.get(position).getTeamCircleStatus());
+
+                }*/
+                try {
+                    holder.tvTeamDistance.setText(String.format("%.2f",Float.valueOf(searcheTeams.get(position).getDistance()))+" Km");
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-                TextDrawable drawable = TextDrawable.builder()
-                        .beginConfig()
-                        .withBorder(4) /* thickness in px */
-                        .endConfig()
-                        .buildRoundRect("A", ContextCompat.getColor(mContext,R.color.colorPrimary), 10);
-                holder.ivTeamLogo.setImageDrawable(drawable);
+                if(searcheTeams.get(position).getTeamLogoUrl()!=null&&!searcheTeams.get(position).getTeamLogoUrl().equalsIgnoreCase("")){
+                    Glide.with(mContext).load(searcheTeams.get(position).getTeamLogoUrl()).into(holder.ivTeamLogo);
+
+                }else{
+                    if(searcheTeams.get(position).getTeamName()!=null&&!searcheTeams.get(position).getTeamName().equalsIgnoreCase("")) {
+                        TextDrawable drawable = TextDrawable.builder()
+                                .beginConfig()
+                                .withBorder(4) /* thickness in px */
+                                .endConfig()
+                                .buildRoundRect("" + searcheTeams.get(position).getTeamName().charAt(0), ContextCompat.getColor(mContext, R.color.colorPrimary), 10);
+                        holder.ivTeamLogo.setImageDrawable(drawable);
+                    }
+                }
+                holder.tv_send_action.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(searcheTeams.get(position).getTeamCircleStatus().equalsIgnoreCase("SEND")){
+                            ShowMessage(mContext,"Do you want to cancel Team Invitation",position);
+                        }else{
+                            sendInvitation(mContext,position);
+                        }
+                    }
+                });
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent=   new Intent(mContext, TeamDetailsActivity.class);
+                        intent.putExtra(AppConstants.TEAM_ID,searcheTeams.get(position).getTeamId());
+                        intent.putExtra(AppConstants.USER_ID,searcheTeams.get(position).getUserId());
+                        mContext.startActivity(intent);
+                    }
+                });
                 break;
             case  ADD_VIEW:
                 // Set its video options.
@@ -112,74 +180,99 @@ public class FindTeamAdapter extends RecyclerView.Adapter<FindTeamAdapter.MyView
                 });
                 holder.adView.loadAd(new AdRequest.Builder().build());
                 break;
+            case PROGRESS_VIEW:
+                break;
         }
 
 
-holder.itemView.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        mContext.startActivity(new Intent(mContext, TeamDetailsActivity.class));
-    }
-});
+
     }
 
-    private void populateContentAdView(NativeContentAd nativeContentAd,
-                                       NativeContentAdView adView) {
+    private void sendInvitation(final Context mContext, final int position) {
+
+        final TeamCircleRequest teamCircleRequest= new TeamCircleRequest();
+        teamCircleRequest.setSenderId(Integer.parseInt(CommonUtils.getPreferences(mContext, AppConstants.TEAM_ID)));
+        teamCircleRequest.setSenderUserId(Integer.parseInt(CommonUtils.getPreferences(mContext, AppConstants.USER_ID)));
+        teamCircleRequest.setReceiverId(Integer.parseInt(searcheTeams.get(position).getTeamId()));
+        teamCircleRequest.setReceiverUserId(Integer.parseInt(searcheTeams.get(position).getUserId()));
+        teamCircleRequest.setRequestAction("SEND");
+
+        NetWorkApiCall.getInstance().getApiResponse(mContext, APIExecutor.getApiService().sendTeamCircleRequest(teamCircleRequest), new OnApiResponse() {
+            @Override
+            public void onResponse(Response response) {
 
 
-        adView.setHeadlineView(adView.findViewById(R.id.contentad_headline));
-        adView.setImageView(adView.findViewById(R.id.contentad_image));
-        adView.setBodyView(adView.findViewById(R.id.contentad_body));
-        adView.setCallToActionView(adView.findViewById(R.id.contentad_call_to_action));
-        adView.setLogoView(adView.findViewById(R.id.contentad_logo));
-        adView.setAdvertiserView(adView.findViewById(R.id.contentad_advertiser));
+                if(response!=null){
+                    final TeamCircle teamCircle= new Gson().fromJson(new Gson().toJsonTree(response.data).toString(),TeamCircle.class);
+                    if(teamCircle!=null){
+                        searcheTeams.get(position).setTeamCircleStatus("SEND");
+                       searcheTeams.get(position).setTeamRequestId(String.valueOf(teamCircle.getTeamCircleId()));
+                        notifyItemChanged(position);
+                    }
 
-        // Some assets are guaranteed to be in every NativeContentAd.
-        ((TextView) adView.getHeadlineView()).setText(nativeContentAd.getHeadline());
-        ((TextView) adView.getBodyView()).setText(nativeContentAd.getBody());
-        ((TextView) adView.getCallToActionView()).setText(nativeContentAd.getCallToAction());
-        ((TextView) adView.getAdvertiserView()).setText(nativeContentAd.getAdvertiser());
+                }
+            }
+        });
+    }
 
-        List<NativeAd.Image> images = nativeContentAd.getImages();
+    private void CancelInvitation(final Context mContext, final int position) {
 
-        if (images.size() > 0) {
-            ((ImageView) adView.getImageView()).setImageDrawable(images.get(0).getDrawable());
-        }
+        final TeamCircleRequest teamCircleRequest= new TeamCircleRequest();
+        teamCircleRequest.setSenderId(Integer.parseInt(CommonUtils.getPreferences(mContext, AppConstants.TEAM_ID)));
+        teamCircleRequest.setSenderUserId(Integer.parseInt(CommonUtils.getPreferences(mContext, AppConstants.USER_ID)));
+        teamCircleRequest.setReceiverId(Integer.parseInt(searcheTeams.get(position).getTeamId()));
+        teamCircleRequest.setReceiverUserId(Integer.parseInt(searcheTeams.get(position).getUserId()));
+        teamCircleRequest.setRequestId(Integer.parseInt(searcheTeams.get(position).getTeamRequestId()));
+        teamCircleRequest.setRequestAction("CANCEL");
+        searcheTeams.get(position).setTeamCircleStatus("Want Play");
+        searcheTeams.get(position).setTeamRequestId("");
+        notifyItemChanged(position);
+        NetWorkApiCall.getInstance().getApiResponse(mContext, APIExecutor.getApiService().sendTeamCircleRequest(teamCircleRequest), new OnApiResponse() {
+            @Override
+            public void onResponse(Response response) {
 
-        // Some aren't guaranteed, however, and should be checked.
-        NativeAd.Image logoImage = nativeContentAd.getLogo();
 
-        if (logoImage == null) {
-            adView.getLogoView().setVisibility(View.INVISIBLE);
-        } else {
-            ((ImageView) adView.getLogoView()).setImageDrawable(logoImage.getDrawable());
-            adView.getLogoView().setVisibility(View.VISIBLE);
-        }
+                if(response!=null){
+                  //  final TeamCircle teamCircle= new Gson().fromJson(new Gson().toJsonTree(response.data).toString(),TeamCircle.class);
 
-        // Assign native ad object to the native view.
-        adView.setNativeAd(nativeContentAd);
+                        searcheTeams.get(position).setTeamCircleStatus("Want Play");
+                        searcheTeams.get(position).setTeamRequestId("");
+                        notifyItemChanged(position);
+
+
+                }
+            }
+        });
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position%4==3){
+        if(searcheTeams.get(position)!=null){
+        if(searcheTeams.get(position).isAddView()){
             return ADD_VIEW;
 
-        }else {
+        } else {
             return NORMAL_VIEW;
+        }}else {
+
+                return PROGRESS_VIEW;
+
+
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return searcheTeams.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_send_action;
         private final TextView tvTeamDistance;
         private final ImageView ivTeamLogo;
+        private final TextView tvTeamLocation;
+        private final TextView tvTeamName;
         private  NativeExpressAdView adView;
         private  CardView cardView;
 
@@ -187,9 +280,28 @@ holder.itemView.setOnClickListener(new View.OnClickListener() {
             super(itemView);
             tv_send_action= (TextView)itemView.findViewById(R.id.tv_send_action);
             tvTeamDistance= (TextView)itemView.findViewById(R.id.tvTeamDistance);
+            tvTeamName= (TextView)itemView.findViewById(R.id.tvTeamName);
+            tvTeamLocation= (TextView)itemView.findViewById(R.id.tvTeamLocation);
             ivTeamLogo= (ImageView)itemView.findViewById(R.id.ivTeamLogo);
             cardView= (CardView)itemView.findViewById(R.id.cardView);
             adView= (NativeExpressAdView)itemView.findViewById(R.id.adView);
         }
+    }
+    void ShowMessage (Context context , String message, final int position){
+
+        AlertDialog.Builder builder= new AlertDialog.Builder(context).setMessage(message).
+                setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        CancelInvitation(mContext,position);
+                        dialogInterface.dismiss();
+                    }
+                }).setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
     }
 }

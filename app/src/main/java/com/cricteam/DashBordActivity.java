@@ -1,6 +1,9 @@
 package com.cricteam;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -10,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -53,16 +57,22 @@ public class DashBordActivity extends AppCompatActivity implements OnFragmentInt
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            textLabel.setVisibility(View.GONE);
+            currentLoction.setVisibility(View.GONE);
             switch (item.getItemId()) {
+
                 case R.id.navigation_home:
                     getSupportFragmentManager().beginTransaction().replace(R.id.content, AccountFragment.newInstance("","")).commit();
                     searchImage.setVisibility(View.GONE);
+
                     tvHeader.setText("My Profile");
+
                     return true;
                 case R.id.navigation_dashboard:
                     getSupportFragmentManager().beginTransaction().replace(R.id.content, FindTeamFragment.newInstance("","")).commit();
                     searchImage.setVisibility(View.VISIBLE);
                     tvHeader.setText("Search team  by location");
+
                     return true;
                 case R.id.navigation_notifications:
                     getSupportFragmentManager().beginTransaction().replace(R.id.content, NotificationFragment.newInstance("","")).commit();
@@ -82,16 +92,20 @@ public class DashBordActivity extends AppCompatActivity implements OnFragmentInt
 
     };
     private TextView tvHeader;
+    private TextView textLabel;
+    private ImageView currentLoction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_bord);
-        getAddressAndEnableLocation();
+       // getAddressAndEnableLocation();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
          searchImage = (ImageView) findViewById(R.id.searchImage);
+        currentLoction = (ImageView) findViewById(R.id.currentLoction);
         tvHeader = (TextView) findViewById(R.id.tvHeader);
+        textLabel = (TextView) findViewById(R.id.textLabel);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_dashboard);
     }
@@ -110,7 +124,14 @@ public class DashBordActivity extends AppCompatActivity implements OnFragmentInt
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-    getAddressAndEnableLocation();
+
+        if(uri==null)
+        getAddressAndEnableLocation();
+    }
+
+    @Override
+    public void onFragmentInteractions(Fragment fragment) {
+
     }
 
     @Override
@@ -185,12 +206,15 @@ public class DashBordActivity extends AppCompatActivity implements OnFragmentInt
             case REQUEST_LOCATION:
                 switch (resultCode) {
                     case Activity.RESULT_OK: {
+                        textLabel.setVisibility(View.VISIBLE);
                         getPlaceLocation();
                         // All required changes were successfully made
                         //   Toast.makeText(MainActivity.this, "Location enabled by user!", Toast.LENGTH_LONG).show();
                         break;
                     }
+
                     case Activity.RESULT_CANCELED: {
+                        ShowMessage(this,"Get Near By Team Via  Location Search");
                         // The user was asked to change settings, but chose not to
                         // Toast.makeText(MainActivity.this, "Location not enabled, user cancelled.", Toast.LENGTH_LONG).show();
                         break;
@@ -228,9 +252,21 @@ public class DashBordActivity extends AppCompatActivity implements OnFragmentInt
                 if(likelyPlaces.getCount()>0){
                     Log.e("location address",""+likelyPlaces.get(0).getPlace().getAddress());
                     EventBus.getDefault().post(likelyPlaces.get(0).getPlace());
+                    textLabel.setVisibility(View.GONE);
                     likelyPlaces.release();}
             }
         });
+    }
+    void ShowMessage (Context context , String message){
+
+        AlertDialog.Builder builder= new AlertDialog.Builder(context).setMessage(message).
+                setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        builder.show();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

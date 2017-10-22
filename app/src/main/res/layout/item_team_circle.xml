@@ -68,7 +68,6 @@
                 android:gravity="left|center_vertical"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="1 km"
-                android:drawableLeft="@drawable/ic_place_black_24dp"
                 android:textAppearance="?android:textAppearanceMedium"/>
 
             <RatingBar

@@ -1,32 +1,32 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@color/colorPrimary"
+    android:background="@color/white"
     tools:context="com.cricteam.CreateTeamActivity">
-    <android.support.v4.widget.SwipeRefreshLayout
 
+    <TextView
+        android:id="@+id/progressLabel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableTop="@mipmap/batsman"
+        android:gravity="center_horizontal"
+        android:text="Fetching.. Team Near By Your Location ,Please Enable GPS Or Search by location"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:id="@+id/recyclerFindTeam"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-
-</android.support.v4.widget.SwipeRefreshLayout>
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom|end"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        >
-    </com.google.android.gms.ads.AdView>
 </FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
+

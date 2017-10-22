@@ -3,17 +3,59 @@ package com.cricteam.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.ParseException;
+import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Patterns;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Amar on 8/16/2017.
@@ -307,6 +349,798 @@ public class CommonUtils {
         }
         return true;
     }
+
+
+    /**
+     * Hide key pad.
+     *
+     * @param activity the activity
+     */
+    public static void hideKeyPad(Activity activity) {
+        try {
+            InputMethodManager inputManager = (InputMethodManager)
+                    activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if(activity.getCurrentFocus()!=null)
+                inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Hide soft keyboard.
+     *
+     * @param activity the activity
+     */
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    /**
+     * Send email.
+     *
+     * @param context the context
+     * @param To      the to
+     */
+    public static void SendEmail(Activity context, String To) {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,To);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+        try {
+            context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(context,
+                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Gets time stamp.
+     *
+     * @return the time stamp
+     */
+    public static String getTimeStamp() {
+
+        long timestamp = (System.currentTimeMillis() / 1000L);
+        String tsTemp = "" + timestamp;
+
+        return "" + tsTemp;
+
+    }
+
+    /**
+     * Is valid email boolean.
+     *
+     * @param target the target
+     * @return the boolean
+     */
+
+    /**
+     * Save preferences string.
+     *
+     * @param context the context
+     * @param key     the key
+     * @param value   the value
+     */
+    public static void savePreferencesString(Context context, String key, String value) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+
+    }
+    public static void savePreferencesBoolean(Context context, String key, boolean value) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+
+    }
+    /**
+     * Gets preferences.
+     *
+     * @param context the context
+     * @param key     the key
+     * @return the preferences
+     */
+    public static String getPreferences(Context context, String key) {
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(key, "");
+
+    }
+
+    /**
+     * Remove preferences.
+     *
+     * @param context the context
+     * @param key     the key
+     */
+    public static void removePreferences(Activity context, String key) {
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+
+    }
+
+    /**
+     * Gets preferences boolean.
+     *
+     * @param context the context
+     * @param key     the key
+     * @return the preferences boolean
+     */
+    public static boolean getPreferencesBoolean(Activity context, String key) {
+
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean(key, false);
+
+    }
+
+    /**
+     * Gets preferences string.
+     *
+     * @param context the context
+     * @param key     the key
+     * @return the preferences string
+     */
+    public static String getPreferencesString(Context context, String key) {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(key, "");
+    }
+
+    /**
+     * Gets date.
+     *
+     * @param context             the context
+     * @param timestamp_in_string the timestamp in string
+     * @return the date
+     */
+    public static String getDate(Context context, String timestamp_in_string) {
+        long dv = (Long.valueOf(timestamp_in_string))*1000;// its need to be in milisecond
+        Date df = new Date(dv);
+        String vv = new SimpleDateFormat("MMM dd/yyyy,hh:mma").format(df);
+        return vv;
+    }
+
+    /**
+     * Get time string.
+     *
+     * @param timestamp_in_string the timestamp in string
+     * @return the string
+     */
+    public static String getTime(String timestamp_in_string){
+        long dv = Long.valueOf(timestamp_in_string)*1000;// its need to be in milisecond
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(dv);
+        String date = DateFormat.format("hh:mm:ss", cal).toString();
+        return date;
+
+    }
+
+    /**
+     * Is date today boolean.
+     *
+     * @param milliSeconds the milli seconds
+     * @return the boolean
+     */
+    public static boolean isDateToday(long milliSeconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+
+        Date getDate = calendar.getTime();
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        Date startDate = calendar.getTime();
+
+        return getDate.compareTo(startDate) > 0;
+
+    }
+
+    /**
+     * Show alert title.
+     *
+     * @param title   the title
+     * @param message the message
+     * @param context the context
+     */
+    public static void showAlertTitle(String title, String message,
+                                      final Context context) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message).setCancelable(false).setTitle(title)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        try {
+            builder.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * Gets hours from millis.
+     *
+     * @param milliseconds the milliseconds
+     * @return the hours from millis
+     */
+    public static String getHoursFromMillis(long milliseconds) {
+        return "" + (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+    }
+
+    /**
+     * Gets bit map from image u rl.
+     *
+     * @param imagepath the imagepath
+     * @param activity  the activity
+     * @return the bit map from image u rl
+     */
+    public static Bitmap getBitMapFromImageURl(String imagepath, Activity activity) {
+
+        Bitmap bitmapFromMapActivity = null;
+        Bitmap bitmapImage = null;
+        try {
+
+            File file = new File(imagepath);
+            // We need to recyle unused bitmaps
+            if (bitmapImage != null) {
+                bitmapImage.recycle();
+            }
+            bitmapImage = reduceImageSize(file, activity);
+            int exifOrientation = 0;
+            try {
+                ExifInterface exif = new ExifInterface(imagepath);
+                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            int rotate = 0;
+
+            switch (exifOrientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+            }
+
+            if (rotate != 0) {
+                int w = bitmapImage.getWidth();
+                int h = bitmapImage.getHeight();
+
+                // Setting pre rotate
+                Matrix mtx = new Matrix();
+                mtx.preRotate(rotate);
+
+                // Rotating Bitmap & convert to ARGB_8888, required by
+                // tess
+
+                Bitmap myBitmap = Bitmap.createBitmap(bitmapImage, 0, 0, w, h,
+                        mtx, false);
+                bitmapFromMapActivity = myBitmap;
+            } else {
+                int SCALED_PHOTO_WIDTH = 150;
+                int SCALED_PHOTO_HIGHT = 200;
+                Bitmap myBitmap = Bitmap.createScaledBitmap(bitmapImage,
+                        SCALED_PHOTO_WIDTH, SCALED_PHOTO_HIGHT, true);
+                bitmapFromMapActivity = myBitmap;
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return bitmapFromMapActivity;
+
+    }
+
+    /**
+     * Reduce image size bitmap.
+     *
+     * @param f       the f
+     * @param context the context
+     * @return the bitmap
+     */
+    public static Bitmap reduceImageSize(File f, Context context) {
+
+        Bitmap m = null;
+        try {
+
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            final int REQUIRED_SIZE = 150;
+
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE
+                        || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            o2.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            m = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+            // Toast.makeText(context,
+            // "Image File not found in your phone. Please select another image.",
+            // Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+
+        }
+        return m;
+    }
+
+    /**
+     * Print key hash string.
+     *
+     * @param context the context
+     * @return the string
+     */
+    public static String printKeyHash(Activity context) {
+        PackageInfo packageInfo;
+        String key = null;
+        try {
+            //getting application package name, as defined in manifest
+            String packageName = context.getApplicationContext().getPackageName();
+
+            //Retriving package info
+            packageInfo = context.getPackageManager().getPackageInfo(packageName,
+                    PackageManager.GET_SIGNATURES);
+
+            Log.e("Package Name=", context.getApplicationContext().getPackageName());
+
+            for (Signature signature : packageInfo.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                key = new String(Base64.encode(md.digest(), 0));
+                // String key = new String(Base64.encodeBytes(md.digest()));
+                Log.e("Key Hash=", key);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.e("Name not found", e1.toString());
+        }
+        catch (NoSuchAlgorithmException e) {
+            Log.e("No such an algorithm", e.toString());
+        } catch (Exception e) {
+            Log.e("Exception", e.toString());
+        }
+
+        return key;
+    }
+
+
+    /**
+     * Dialog select date.
+     *
+     * @param context  the context
+     * @param textView the text view
+     */
+    public static void dialogSelectDate(final Context context, final TextView textView) {
+        // Process to get Current Date
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        // Launch Date Picker Dialog
+        DatePickerDialog dpd = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // Display Selected date in textbox
+                        Calendar userAge = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                        Calendar minAdultAge = new GregorianCalendar();
+                        minAdultAge.add(Calendar.YEAR, 0);
+                        if (minAdultAge.after(userAge)) {
+                            textView.setText(dayOfMonth + "-"+ (monthOfYear + 1) + "-" + year);
+                        }else {
+                          //  showAlertOk("Please select a valid date of birth.",context);
+                        }
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
+        dpd.setCancelable(false);
+    }
+
+
+    /**
+     * Toast.
+     *
+     * @param context the context
+     * @param string  the string
+     */
+    public static void Toast(Context context, String string) {
+
+        Toast.makeText(context,"Work in progress", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    /**
+     * Show toast.
+     *
+     * @param context the context
+     * @param message the message
+     */
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Dp 2 px float.
+     *
+     * @param resources the resources
+     * @param dp        the dp
+     * @return the float
+     */
+/*It is used for dynamic progress bar*/
+    public static float dp2px(Resources resources, float dp) {
+        final float scale = resources.getDisplayMetrics().density;
+        return  dp * scale + 0.5f;
+    }
+
+    /**
+     * Sp 2 px float.
+     *
+     * @param resources the resources
+     * @param sp        the sp
+     * @return the float
+     */
+    public static float sp2px(Resources resources, float sp){
+        final float scale = resources.getDisplayMetrics().scaledDensity;
+        return sp * scale;
+    }
+
+
+    /**
+     * Gets screen width resolution.
+     *
+     * @param context the context
+     * @return the screen width resolution
+     */
+    public static int getScreenWidthResolution(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        System.out.println(size.x);
+        return size.x;
+
+    }
+
+    /**
+     * Gets screen height resolution.
+     *
+     * @param context the context
+     * @return the screen height resolution
+     */
+    public static String getScreenHeightResolution(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        return  height + "";
+    }
+
+
+
+
+
+    /**
+     * Gets month.
+     *
+     * @param timeStamp the time stamp
+     * @return the month
+     */
+    public static int getMonth(long timeStamp)
+    {
+
+        java.text.DateFormat formatter1 = new SimpleDateFormat("MM", Locale.ENGLISH);
+        Log.e("##@@Month", formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+        return Integer.parseInt(formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+    }
+
+    /**
+     * Gets year.
+     *
+     * @param timeStamp the time stamp
+     * @return the year
+     */
+    public static int getYear(long timeStamp)
+    {
+
+        java.text.DateFormat formatter1 = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        Log.e("##@@", formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+        return Integer.parseInt(formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+    }
+
+    /**
+     * Gets day.
+     *
+     * @param timeStamp the time stamp
+     * @return the day
+     */
+    public static int getDay(long timeStamp)
+    {
+
+
+        java.text.DateFormat formatter1 = new SimpleDateFormat("dd", Locale.ENGLISH);
+        Log.e("##@@Day", formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+        return Integer.parseInt(formatter1.format(new java.sql.Date((Long.valueOf(timeStamp) * 1000))));
+
+    }
+
+    /**
+     * Check permission storage boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static  boolean checkPermissionStorage(Activity context){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (result  == PackageManager.PERMISSION_GRANTED){
+
+            if(result1 == PackageManager.PERMISSION_GRANTED){
+                return true;
+            }else {
+                return false;
+            }
+
+        } else {
+            return false;
+
+        }
+    }
+
+
+    /**
+     * Check permission camera boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean checkPermissionCamera(Activity context){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA);
+        if (result  == PackageManager.PERMISSION_GRANTED){
+
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    /**
+     * Check permission user contact boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean checkPermissionUserContact(Activity context){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS);
+        if (result  == PackageManager.PERMISSION_GRANTED){
+
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    /**
+     * Check permission send sms boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean checkPermissionSendSms(Activity context){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS);
+        if (result  == PackageManager.PERMISSION_GRANTED){
+
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    /**
+     * Check permission call phone boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean checkPermissionCallPhone(Activity context){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE);
+        if (result  == PackageManager.PERMISSION_GRANTED){
+
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    /**
+     * Check pass word and confirm password boolean.
+     *
+     * @param password        the password
+     * @param confirmPassword the confirm password
+     * @return the boolean
+     */
+    public static boolean checkPassWordAndConfirmPassword(String password, String confirmPassword)
+    {
+        boolean pstatus = false;
+        if (confirmPassword != null && password != null)
+        {
+            if (password.equals(confirmPassword))
+            {
+                pstatus = true;
+            }
+        }
+        return pstatus;
+    }
+
+
+
+    /**
+     * Is leap year boolean.
+     *
+     * @param year the year
+     * @return the boolean
+     */
+    public static boolean isLeapYear(int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        return cal.getActualMaximum(cal.DAY_OF_YEAR) > 365;
+    }
+
+    /**
+     * Load json from asset string.
+     *
+     * @param context  the context
+     * @param fileName the file name
+     * @return the string
+     */
+    public static String loadJSONFromAsset(Context context, String fileName) {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
+
+
+
+
+
+
+
+    public static float getFloatValue(String s){
+        float value = 0;
+        try{
+            value = Float.parseFloat(setValidText(s, "0"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static String setValidText(String value, String defaultValue){
+        return TextUtils.isEmpty(value)?defaultValue:value;
+    }
+
+    public static String changeDateTimeFormat(String date, String oldFormat, String newFormat) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(oldFormat, Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat(newFormat, Locale.getDefault());
+        Date newDate;
+        String str;
+        try {
+            newDate = inputFormat.parse(date);
+            str = outputFormat.format(newDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        Log.i("TimeStampFormatter", "_____oldFormat_____" + oldFormat);
+        Log.i("TimeStampFormatter", "_____newFormat_____" + newFormat);
+        Log.i("TimeStampFormatter", "_____date_____" + date);
+      //  Log.i("TimeStampFormatter", "_____changeDateFormat_____" + str);
+
+        return "";
+    }
+
+
+    public static String getSomeDeviceId(Context context) {
+        String deviceId = "";
+
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (telephonyManager != null) {
+            try {
+                deviceId = telephonyManager.getDeviceId();
+            } catch(Exception e) {
+
+            }
+        }
+
+        if (deviceId == null || deviceId.equals("")) {
+            // find some different id
+            deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            if (deviceId == null || deviceId.equals("")) {
+                WifiManager m_wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                if (m_wm != null) {
+                    deviceId = m_wm.getConnectionInfo().getMacAddress();
+                }
+            }
+        }
+        return deviceId;
+    }
+
 
     /*check the Email id pattern*/
 

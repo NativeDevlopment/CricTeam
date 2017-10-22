@@ -21,6 +21,8 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.io.IOException;
+
 import static com.cricteam.R.id.btSubmit;
 import static com.cricteam.R.id.ivUserPics;
 
@@ -89,12 +91,17 @@ public class UpdatePlayerActivity extends AppCompatActivity {
 
             case ImagePicker.REQUEST_CAMERA:
                 if (resultCode == Activity.RESULT_OK) {
-                    ivTeamLogo.setImage(data);
+
+                        ivTeamLogo.setImage(data);
+
                 }
+
                 break;
             case ImagePicker.REQUEST_GALLERY:
                 if (resultCode == Activity.RESULT_OK) {
-                    ivTeamLogo.setImage(data);
+
+                        ivTeamLogo.setImage(data);
+
                 }
                 break;
         }

@@ -1,7 +1,10 @@
 package com.cricteam.netwokmodel;
 
 
-public class PlayerDetails {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class PlayerDetails implements Parcelable {
 	/**
 	 *  player details class for add player to team
 	 */
@@ -37,6 +40,26 @@ public class PlayerDetails {
 		this.playerImageUrl=playerImageUrl;
 	}
 
+
+	protected PlayerDetails(Parcel in) {
+		playerId = in.readInt();
+		playerName = in.readString();
+		playerMobile = in.readString();
+		playerImageUrl = in.readString();
+		leaderShip = in.readString();
+	}
+
+	public static final Creator<PlayerDetails> CREATOR = new Creator<PlayerDetails>() {
+		@Override
+		public PlayerDetails createFromParcel(Parcel in) {
+			return new PlayerDetails(in);
+		}
+
+		@Override
+		public PlayerDetails[] newArray(int size) {
+			return new PlayerDetails[size];
+		}
+	};
 
 	@Override
 	public String toString(){
@@ -148,5 +171,19 @@ public class PlayerDetails {
 	 */
 	public void setPlayerTypes(PlayerTypes playerTypes) {
 		this.playerTypes = playerTypes;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeInt(playerId);
+		parcel.writeString(playerName);
+		parcel.writeString(playerMobile);
+		parcel.writeString(playerImageUrl);
+		parcel.writeString(leaderShip);
 	}
 }

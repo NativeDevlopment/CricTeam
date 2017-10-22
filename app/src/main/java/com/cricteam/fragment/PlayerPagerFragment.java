@@ -110,7 +110,7 @@ public class PlayerPagerFragment extends Fragment {
 
 
         }
-        recylerFindTeam.setAdapter(new PlayerAdapter(mContext,playerList));
+       // recylerFindTeam.setAdapter(new PlayerAdapter(mContext,playerList));
     }
 
     private void initializedId() {

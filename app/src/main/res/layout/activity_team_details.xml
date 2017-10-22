@@ -1,7 +1,10 @@
-
-<LinearLayout
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefreshLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -107,12 +110,27 @@
         android:textColor="@android:color/white"
         android:text="Player List :"
         />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvPlayerList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:id="@+id/playerListLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@android:color/white"
+                android:text="Player List Not Available"
+                />
+        </FrameLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -142,6 +160,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tvTeamDistance" />
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbCall"
         android:layout_width="wrap_content"
         app:fabSize="normal"
         android:layout_gravity="center"
@@ -163,4 +182,4 @@
     </com.google.android.gms.ads.AdView>
 </LinearLayout>
 
-
+</android.support.v4.widget.SwipeRefreshLayout>

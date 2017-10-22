@@ -23,8 +23,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cricteam.listner.OnApiResponse;
+import com.cricteam.netwokmodel.APIExecutor;
+import com.cricteam.netwokmodel.NetWorkApiCall;
+import com.cricteam.netwokmodel.Response;
+import com.cricteam.netwokmodel.UserCompleteDetails;
+import com.cricteam.netwokmodel.UserDetails;
+import com.cricteam.netwokmodel.VerifyOtp;
 import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
+import com.cricteam.utils.DelayedProgressDialog;
 import com.cricteam.utils.SearchableListDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,9 +46,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  * A login screen that offers login via email/password.
@@ -63,6 +76,7 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private String mobileNo;
+    private String OTP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +86,7 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
         fbVerifyOtp = findViewById(R.id.fbVerifyOtp);
         tvMobileNO = (TextView) findViewById(R.id.tvMobileNO);
         tvLabel = (TextView) findViewById(R.id.tvLabel);
-        tvMobileNO.setCompoundDrawablesWithIntrinsicBounds(null,null, AppCompatResources.getDrawable(this, R.drawable.ic_edit_black_24dp),null);
+        tvMobileNO.setCompoundDrawablesWithIntrinsicBounds(null, null, AppCompatResources.getDrawable(this, R.drawable.ic_edit_black_24dp), null);
         tvResendCode = (TextView) findViewById(R.id.tvResendCode);
         setenableResendButton(false);
         tvTimer = (TextView) findViewById(R.id.tvTimer);
@@ -82,56 +96,16 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
         tvResendCode.setOnClickListener(this);
         otpCountDownTimer = new OtpCountDownTimer(30000, 1000);
         otpCountDownTimer.start();
+        // setHeader();
+        OTP = getIntent().getStringExtra(AppConstants.OTP);
         //setHeader();
         if (getIntent().getStringExtra(AppConstants.MOBILE_NO) != null) {
             tvMobileNO.setText(getIntent().getStringExtra(AppConstants.MOBILE_NO));
-           mobileNo=getIntent().getStringExtra(AppConstants.MOBILE_NO).replace("-","");
+            etOtpNo.setText(""+OTP);
+            mobileNo = getIntent().getStringExtra(AppConstants.MOBILE_NO).replace("-", "");
         }
 
-        mAuth= FirebaseAuth.getInstance();
-        mCallbacks= new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-               // signInWithPhoneAuthCredential(phoneAuthCredential);
-                Log.d(TAG, "onVerificationCompleted:" + phoneAuthCredential);
-            }
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
-                    // ...
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
-                    // ...
-                }
-            }
-
-            @Override
-            public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                super.onCodeSent(verificationId, forceResendingToken);
-                Log.d(TAG, "onCodeSent:" + verificationId);
-                // Save verification ID and resending token so we can use them later
-                mVerificationId = verificationId;
-                mResendToken = forceResendingToken;
-
-
-            }
-        };
-
-
-        ;
-
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                mobileNo,        // Phone number to verify
-                120,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks);
-        Log.d(TAG, "provider id phone Auth :" + PhoneAuthProvider.PROVIDER_ID);
-          }
-
-
+    }
     private void setenableResendButton(boolean b) {
         tvResendCode.setEnabled(b);
         if(!b)
@@ -147,31 +121,6 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
         setSupportActionBar(toolbar);
         toolbar.setTitle("");
 
-    }
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-
-                            FirebaseUser user = task.getResult().getUser();
-                            user.getUid();
-                            startActivity(new Intent(OtpVerifyActivity.this,CreateTeamActivity.class));
-                            finishAffinity();
-
-                            // ...
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                            }
-                        }
-                    }
-                });
     }
     @Override
     protected void onPause() {
@@ -207,12 +156,75 @@ public class OtpVerifyActivity extends AppCompatActivity  implements OnClickList
             case R.id.tvResendCode:
                 otpCountDownTimer.start();
                 setenableResendButton(false);
+                  NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(mobileNo.trim()), new OnApiResponse() {
+                        @Override
+                        public void onResponse(Response response) {
+                            if(response!=null){
+
+                          }
+                        }
+                    });
                 break;
             case R.id.fbVerifyOtp:
                 if(!etOtpNo.getText().toString().equalsIgnoreCase("")&&etOtpNo.getText().toString().length()==6){
+                    final DelayedProgressDialog progressDialog = new DelayedProgressDialog();
+                    progressDialog.show(getSupportFragmentManager(), "tag");
+                    VerifyOtp verifyOtp= new VerifyOtp();
+                    verifyOtp.setMobileNo(mobileNo.substring(1));
+                    verifyOtp.setDeviceId(AppConstants.PSEUDO_CODE_DEVICE_ID);
+                    verifyOtp.setDeviceType("Android");
+                    verifyOtp.setOtp(etOtpNo.getText().toString());
+                    verifyOtp.setDeviceToken(CommonUtils.getPreferences(OtpVerifyActivity.this,AppConstants.DEVICE_TOKEN));
+                    Log.e("Request",new Gson().toJsonTree(verifyOtp).toString());
+                    NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().verifyOtp(verifyOtp), new OnApiResponse() {
+                        @Override
+                        public void onResponse(Response response) {
+                            progressDialog.cancel();
 
-                    startActivity(new Intent(OtpVerifyActivity.this,CreateTeamActivity.class));
-                    finishAffinity();
+                            if(response!=null) {
+
+                                final UserCompleteDetails userCompleteDetails = new Gson().fromJson(new Gson().toJsonTree(response.data).toString(), UserCompleteDetails.class);
+                                if (userCompleteDetails != null) {
+                                    final UserDetails userDetails = userCompleteDetails.getUserDetails();
+                                    CommonUtils.savePreferencesString(OtpVerifyActivity.this, AppConstants.USER_ID, "" + userDetails.getUserId());
+                                    CricTeamApplication cricTeamApplication = (CricTeamApplication) getApplication();
+                                    Realm realm = Realm.getInstance(cricTeamApplication.config);
+                                    realm.executeTransaction(new Realm.Transaction() {
+                                        @Override
+                                        public void execute(Realm realm) {
+                                            // Add a person
+                                            UserDetails userDetails1 = realm.createObject(UserDetails.class, userDetails.getUserId());
+                                            userDetails1.setUserAddress(userDetails.getUserAddress());
+                                            userDetails1.setUserEmail(userDetails.getUserEmail());
+                                            userDetails1.setUserLat(userDetails.getUserLat());
+                                            userDetails1.setUserLong(userDetails.getUserLong());
+                                            userDetails1.setDeviceType(userDetails.getDeviceType());
+                                            userDetails1.setDeviceId(userDetails.getDeviceId());
+                                            userDetails1.setDeviceToken(userDetails.getDeviceToken());
+                                            userDetails1.setUserImageUrl(userDetails.getUserImageUrl());
+                                            userDetails1.setName(userDetails.getName());
+                                            userDetails1.setMobileNo(userDetails.getMobileNo());
+
+                                        }
+                                    });
+
+                                }
+                                if(userCompleteDetails.getUserTeamList().size()>0){
+                                    CommonUtils.savePreferencesString(OtpVerifyActivity.this,AppConstants.TEAM_ID, String.valueOf(userCompleteDetails.getUserTeamList().get(0).getTeamId()));
+                                    CommonUtils.savePreferencesString(OtpVerifyActivity.this,AppConstants.CUURENT_LAT,String.valueOf(userCompleteDetails.getUserTeamList().get(0).getTeamLat()));
+                                    CommonUtils.savePreferencesString(OtpVerifyActivity.this,AppConstants.CUURENT_LANG,String.valueOf(userCompleteDetails.getUserTeamList().get(0).getTeamLong()));
+
+                                    startActivity(new Intent(OtpVerifyActivity.this, DashBordActivity.class));
+                                    finishAffinity();
+                                }else {
+                                    startActivity(new Intent(OtpVerifyActivity.this, CreateTeamActivity.class));
+                                    finishAffinity();
+                                }
+
+                            }
+                        }
+                    });
+
                 }
                 else {
                     Snackbar.make(etOtpNo,"Please enter Otp which you received.",Snackbar.LENGTH_LONG).show();

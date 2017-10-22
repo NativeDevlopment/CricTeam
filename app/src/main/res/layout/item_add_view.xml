@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            app:adSize="320x150"
+            app:adSize="320x135"
             app:adUnitId="ca-app-pub-6188430950445846/3639357495">
         </com.google.android.gms.ads.NativeExpressAdView>
     </android.support.v7.widget.CardView>

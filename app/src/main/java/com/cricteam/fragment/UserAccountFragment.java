@@ -1,7 +1,9 @@
 package com.cricteam.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,13 +25,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.cricteam.CreateTeamActivity;
+import com.cricteam.CricTeamApplication;
+import com.cricteam.OtpVerifyActivity;
 import com.cricteam.R;
 import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.imagepicker.ImagePicker;
 import com.cricteam.imagepicker.utils.CropImage;
 import com.cricteam.imagepicker.utils.TakePictureUtils;
+import com.cricteam.listner.OnApiResponse;
 import com.cricteam.listner.OnFragmentInteractionListener;
+import com.cricteam.model.ResultCancel;
+import com.cricteam.netwokmodel.APIExecutor;
+import com.cricteam.netwokmodel.NetWorkApiCall;
+import com.cricteam.netwokmodel.Response;
+import com.cricteam.netwokmodel.UserDetails;
+import com.cricteam.netwokmodel.UserDetailsRequest;
+import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
+import com.cricteam.utils.DelayedProgressDialog;
+import com.cricteam.utils.TextDrawable;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.games.event.Event;
@@ -40,9 +58,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +81,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private View mView;
-
+    DelayedProgressDialog progressDialog;
     final int PLACE_PICKER_REQUEST = 1;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -78,7 +101,12 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     StorageReference mountainsRef;
     StorageReference storageRef;
     private Uri image;
+    Realm realm;
+    UserDetails userDetails;
+    public TextView textLabel;
+    private String userLat;
 
+    private String userLong;
     public UserAccountFragment() {
         // Required empty public constructor
     }
@@ -119,6 +147,49 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(getActivity() !=null){
+            if (getActivity() instanceof CreateTeamActivity){
+                ((CreateTeamActivity) getActivity()).getAddressAndEnableLocation();
+            }
+        }
+        CricTeamApplication cricTeamApplication= (CricTeamApplication)getActivity(). getApplication();
+         realm= Realm.getInstance(cricTeamApplication.config);
+
+        RealmQuery<UserDetails> result2 = realm.where(UserDetails.class)
+                .equalTo("userId", Integer.valueOf(CommonUtils.getPreferences(mContext,AppConstants.USER_ID)));
+        RealmResults<UserDetails> results1 =
+                result2.findAll();
+        for(UserDetails c:results1) {
+            Log.e("results1>>>",""+ c.getUserId());
+            userDetails=c;
+        }
+        setUi();
+    }
+
+    private void setUi() {
+        if(userDetails!=null){
+            et_name.setText(userDetails.getName());
+            et_Email.setText(userDetails.getUserEmail());
+            tv_mobile_no.setText(userDetails.getMobileNo());
+            if(userDetails.getUserImageUrl()!=null&&!userDetails.getUserImageUrl().equalsIgnoreCase("")){
+                ivUserPics.setwebImage(userDetails.getUserImageUrl());
+            }else{
+                if(userDetails.getName()!=null&&!userDetails.getName().equalsIgnoreCase("")) {
+                    TextDrawable drawable = TextDrawable.builder()
+                            .beginConfig()
+                            .withBorder(4) /* thickness in px */
+                            .endConfig()
+                            .buildRoundRect("" + userDetails.getName().charAt(0), ContextCompat.getColor(mContext, R.color.colorPrimary), 10);
+                    ivUserPics.getImageView().setImageDrawable(drawable);
+                }
+            }
+            tv_user_address.setText(userDetails.getUserAddress());
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -146,8 +217,8 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
                     Place place = PlacePicker.getPlace(mContext, data);
                     if (place != null) {
                         tv_user_address.setText("" + place.getAddress());
-                        String toastMsg = String.format("Place: %s", place.getName());
-                        Toast.makeText(mContext, toastMsg, Toast.LENGTH_LONG).show();
+                        userLat= String.valueOf(place.getLatLng().latitude);
+                        userLong= String.valueOf(place.getLatLng().longitude);
                     }
                 }
                 break;
@@ -184,6 +255,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         ivUserPics.setFragment(this);
         et_name = (EditText) mView.findViewById(R.id.et_name);
         tv_mobile_no = (TextView) mView.findViewById(R.id.tv_mobile_no);
+        textLabel = (TextView) mView.findViewById(R.id.textLabel);
         tv_user_address = (TextView) mView.findViewById(R.id.tv_user_address);
         et_Email = (EditText) mView.findViewById(R.id.et_Email);
         titleHeader = (TextView) mView.findViewById(R.id.titleHeader);
@@ -230,8 +302,14 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
                     et_Email.requestFocus();
                     Snackbar.make(et_Email,"Please enter the correct email id",Snackbar.LENGTH_SHORT).show();
                 }else {
-                    saveImageToCloud();
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, CreateTeamFragment.newInstance(mParam1, "")).addToBackStack(null).commit();
+                   if( CommonUtils.isOnline(mContext)){
+                         progressDialog = new DelayedProgressDialog();
+                       progressDialog.show(getChildFragmentManager(), "tag");
+
+                    saveImageToCloud();}else{
+                        CommonUtils.showToast(mContext,"Please Check Network Connection");
+
+                    }
                 }
                 break;
             case R.id.tv_user_address:
@@ -250,8 +328,21 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         }
     }
     private void saveImageToCloud() {
+        if(CommonUtils.isOnline(mContext)){
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    userDetails.setName(et_name.getText().toString());
+                    userDetails.setUserAddress(tv_user_address.getText().toString());
+                    userDetails.setUserEmail(et_Email.getText().toString());
+                    userDetails.setUserLat(userLat);
+                    userDetails.setUserLong(userLong);
+                }
+            });
+
         if (image != null) {
-            StorageReference riversRef = storageRef.child("myPics.jpg");
+
+            StorageReference riversRef = storageRef.child("cricUser"+userDetails.getUserId()+".jpg");
             UploadTask uploadTask = riversRef.putFile(image);
 
 // Register observers to listen for when the download is done or if it fails
@@ -264,17 +355,71 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+             final       Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Log.e("url", "" + downloadUrl);
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            userDetails.setUserImageUrl(downloadUrl.toString());
+                        }
+                    });
 
+                    updateUserProfile(userDetails);
                 }
             });
+        }else {
+            updateUserProfile(userDetails);
+
         }
+        }
+    }
+  void   updateUserProfile(UserDetails userDetails){
+      UserDetailsRequest userDetailsRequest= new UserDetailsRequest();
+      userDetailsRequest.userId=userDetails.getUserId();
+      userDetailsRequest.userEmail=userDetails.getUserEmail();
+      userDetailsRequest.userAddress=userDetails.getUserAddress();
+      userDetailsRequest.userImageUrl=userDetails.getUserImageUrl();
+      userDetailsRequest.userLat=userDetails.getUserLat();
+      userDetailsRequest.userLong=userDetails.getUserLong();
+      userDetailsRequest.name=userDetails.getName();
+      userDetailsRequest.deviceId=userDetails.getDeviceId();
+      userDetailsRequest.deviceToken=userDetails.getDeviceToken();
+      userDetailsRequest.deviceType=userDetails.getDeviceType();
+      userDetailsRequest.mobileNo=userDetails.getMobileNo();
+
+      NetWorkApiCall.getInstance().getApiResponse(mContext, APIExecutor.getApiService().updateUser(userDetailsRequest), new OnApiResponse() {
+          @Override
+          public void onResponse(Response response) {
+
+               progressDialog.cancel();
+              if(response!=null){
+                  final  UserDetails userDetails= new Gson().fromJson(new Gson().toJsonTree(response.data).toString(),UserDetails.class);
+
+                  realm.executeTransaction(new Realm.Transaction() {
+                      @Override
+                      public void execute(Realm realm) {
+                          // Add a person
+
+                          realm.copyToRealmOrUpdate(userDetails);
+                          CreateTeamFragment createTeamFragment=      CreateTeamFragment.newInstance(mParam1, "");
+                          mListener.onFragmentInteractions(createTeamFragment);
+
+                          getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, createTeamFragment).addToBackStack(null).commit();
+                            CommonUtils.savePreferencesBoolean(mContext,AppConstants.IS_COMPLETE_USER,true);
+                      }
+                  });
+              }
+          }
+      });
     }
     @Subscribe
     public void onEventMainThread( Place place){
         tv_user_address.setText(place.getAddress());
+        textLabel.setVisibility(View.INVISIBLE);
+        userLat= String.valueOf(place.getLatLng().latitude);
+        userLong= String.valueOf(place.getLatLng().longitude);
     }
+
 
     @Override
     public void onStop() {

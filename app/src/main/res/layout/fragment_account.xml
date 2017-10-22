@@ -1,22 +1,25 @@
-<android.support.v4.widget.NestedScrollView
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/ts"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimary"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    tools:context="com.cricteam.CreateTeamActivity">
+<android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
         android:orientation="vertical"
-        android:background="@color/colorPrimary"
-        tools:context="com.cricteam.CreateTeamActivity">
+        >
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             app:cardCornerRadius="8dp"
@@ -58,69 +61,126 @@
                     android:gravity="left"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="Mumbai"
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     android:layout_toRightOf="@+id/ivOwenerImage"
                     android:layout_below="@+id/TvOwenerName"
                     android:textAppearance="?android:textAppearanceMedium"/>
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/tvMyTeam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:visibility="gone"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/my_team" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tvMyTeam"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@android:color/white"
-                android:text="@string/my_team" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvTeamList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </android.support.v7.widget.RecyclerView>
-            <TextView
-                android:id="@+id/tvCreateTeam"
+            <android.support.v7.widget.CardView
+                android:id="@+id/cvCreateTeam"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:gravity="center_horizontal"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@android:color/white"
-                android:text="@string/do_you_want_to_create_team"/>
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fbAddTeam"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:backgroundTint="@color/colorPrimaryDark"
-                app:fabSize="normal"
-                android:layout_margin="5dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                app:cardCornerRadius="8dp"
                 android:layout_gravity="center"
-                app:rippleColor="@android:color/white"
-                android:layout_centerHorizontal="true"
-                app:srcCompat="@drawable/ic_add_black_24dp"
-                android:layout_below="@+id/llPlayerType"
-                />
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                >
+                <TextView
+                    android:id="@+id/tvCreateTeam"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:drawablePadding="5dp"
+                    android:gravity="left|center_vertical"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/white"
+                    android:text="Create Team"/>
+
+            </android.support.v7.widget.CardView>
         </FrameLayout>
-        <LinearLayout
+       <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
             android:layout_gravity="center"
-            android:gravity="center">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
+            >
 
             <TextView
+                android:id="@+id/tvShareApp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:drawablePadding="5dp"
+                android:gravity="left|center_vertical"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@android:color/white"
-                android:drawableRight="@drawable/ic_share_black_24dp"
+                android:textColor="@color/colorPrimary"
                 android:text="@string/invite_sports_lover_to_join_app"/>
-        </LinearLayout>
+</android.support.v7.widget.CardView>
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom|end"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-6188430950445846/4356121914"
+
+            >
+        </com.google.android.gms.ads.AdView>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_gravity="center"
+            app:cardElevation="4dp"
+
+            app:cardBackgroundColor="@color/colorPrimary"
+            >
+
+            <TextView
+                android:id="@+id/tvHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:gravity="left|center_vertical"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/white"
+                android:drawablePadding="5dp"
+                android:text="Help"/>
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+

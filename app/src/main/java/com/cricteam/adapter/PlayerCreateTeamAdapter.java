@@ -113,6 +113,10 @@ public class PlayerCreateTeamAdapter extends RecyclerView.Adapter<PlayerCreateTe
         return playerList.size();
     }
 
+    public List<Player> getplayerList() {
+        return playerList;
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
 

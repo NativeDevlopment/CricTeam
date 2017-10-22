@@ -7,6 +7,17 @@
     android:layout_width="match_parent"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:layout_height="?attr/actionBarSize">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<TextView
+    android:id="@+id/titleHeader"
+    android:layout_width="match_parent"
+    android:layout_gravity="center"
+    android:layout_height="match_parent"
+    android:textColor="@color/white"
+    android:gravity="center"
+    style="?android:textAppearanceMedium"/>
     <TextView
         android:id="@+id/titleSkip"
         android:layout_width="wrap_content"
@@ -18,13 +29,5 @@
         android:visibility="gone"
         android:text="@string/skip"
         style="?android:textAppearanceMedium"/>
-<TextView
-    android:id="@+id/titleHeader"
-    android:layout_width="match_parent"
-    android:layout_gravity="center"
-    android:layout_height="match_parent"
-    android:textColor="@color/white"
-    android:gravity="center"
-    style="?android:textAppearanceMedium"/>
-
+    </FrameLayout>
 </android.support.v7.widget.Toolbar>

@@ -26,8 +26,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cricteam.DashBordActivity;
 import com.cricteam.R;
 import com.cricteam.TeamCaptionActivity;
@@ -36,10 +38,14 @@ import com.cricteam.adapter.PlayerCreateTeamAdapter;
 import com.cricteam.adapter.PlayerPreviewAdapter;
 import com.cricteam.listner.OnFragmentInteractionListener;
 import com.cricteam.model.Player;
+import com.cricteam.netwokmodel.TeamDetails;
 import com.cricteam.utils.AppConstants;
+import com.cricteam.utils.CommonUtils;
+import com.cricteam.utils.TextDrawable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +86,10 @@ public class AddTeamPlayerFragment extends Fragment {
     List<Player> playerList;
     Player player;
     private TextView titleSkip;
+    TeamDetails teamDetails;
+    private ImageView ivTeamLogo;
+    private TextView tvTeamLocation;
+    private TextView tvTeamName;
 
     public AddTeamPlayerFragment() {
         // Required empty public constructor
@@ -93,15 +103,14 @@ public class AddTeamPlayerFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment CreateTeamFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddTeamPlayerFragment newInstance(String param1, String param2) {
+    public static AddTeamPlayerFragment newInstance(String param1, String teamDetails) {
         AddTeamPlayerFragment fragment = new AddTeamPlayerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM2, teamDetails);
         fragment.setArguments(args);
         return fragment;
     }
@@ -112,6 +121,10 @@ public class AddTeamPlayerFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+             teamDetails=new Gson().fromJson(mParam2,TeamDetails.class);
+            if(teamDetails!=null){
+                CommonUtils.savePreferencesString(mContext,AppConstants.TEAM_ID, String.valueOf(teamDetails.getTeamId()));
+            }
         }
     }
 
@@ -225,7 +238,10 @@ public class AddTeamPlayerFragment extends Fragment {
         fbAddPlayer = (FloatingActionButton) mView.findViewById(R.id.fbAddPlayer);
         tvNoOFPlayer = (TextView) mView.findViewById(R.id.tvNoOFPlayer);
         tvTeamPreview = (TextView) mView.findViewById(R.id.tvTeamPreview);
+        ivTeamLogo = (ImageView) mView.findViewById(R.id.ivTeamLogo);
         titleHeader=(TextView) mView. findViewById(R.id.titleHeader);
+        tvTeamName=(TextView) mView. findViewById(R.id.tvTeamName);
+        tvTeamLocation=(TextView) mView. findViewById(R.id.tvTeamLocation);
         titleHeader.setText("Add Player");
         titleSkip=(TextView)mView.findViewById(R.id.titleSkip);
         titleSkip.setVisibility(View.VISIBLE);
@@ -271,14 +287,33 @@ public class AddTeamPlayerFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(mParam1.equalsIgnoreCase("")){
+
+        }else {
+            titleSkip.setVisibility(View.GONE);
+        }
         titleSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent  intent= new Intent(mContext, DashBordActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                getActivity().finish();
+                getActivity().finishAffinity();
             }
         });
+        tvTeamLocation.setText(teamDetails.getTeamAddress());
+        tvTeamName.setText(teamDetails.getTeamName());
+        if(teamDetails.getTeamLogoUrl()!=null&&!teamDetails.getTeamLogoUrl().equalsIgnoreCase("")){
+            Glide.with(mContext).load(teamDetails.getTeamLogoUrl()).into(ivTeamLogo);
+        }else {
+            TextDrawable drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .withBorder(4) /* thickness in px */
+                    .endConfig()
+                    .buildRoundRect("" + teamDetails.getTeamName().charAt(0), ContextCompat.getColor(mContext, R.color.colorPrimary), 10);
+            ivTeamLogo.setImageDrawable(drawable);
+        }
+
     }
 }

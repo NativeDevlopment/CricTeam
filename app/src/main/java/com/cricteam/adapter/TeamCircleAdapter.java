@@ -2,6 +2,8 @@ package com.cricteam.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,8 +13,11 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cricteam.R;
 import com.cricteam.TeamDetailsActivity;
+import com.cricteam.netwokmodel.SearchTeam;
+import com.cricteam.utils.TextDrawable;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -39,6 +44,12 @@ public class TeamCircleAdapter extends RecyclerView.Adapter<TeamCircleAdapter.My
         this.mContext=context;
         MobileAds.initialize(mContext, ADMOB_APP_ID);
     }
+    List<SearchTeam> searcheTeams;
+    public TeamCircleAdapter(Context mContext, List<SearchTeam> searchTeams) {
+        this.mContext=mContext;
+        this.searcheTeams=searchTeams;
+    }
+
     @Override
     public TeamCircleAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_team_circle,parent,false);
@@ -57,6 +68,28 @@ public class TeamCircleAdapter extends RecyclerView.Adapter<TeamCircleAdapter.My
     public void onBindViewHolder(final TeamCircleAdapter.MyViewHolder holder, int position) {
         switch (getItemViewType(position)){
             case NORMAL_VIEW:
+                holder.tvTeamName.setText(searcheTeams.get(position).getTeamName());
+                holder.tvTeamLocation.setText(searcheTeams.get(position).getTeamAddress());
+              //  holder.tv_time.setText(searcheTeams.get(position).getu); change it later
+                holder.tvTeamDistance.setCompoundDrawablesWithIntrinsicBounds(AppCompatResources.getDrawable(mContext, R.drawable.ic_place_black_24dp),null,null,null);
+                try {
+                    holder.tvTeamDistance.setText(String.format("%.2f",Float.valueOf(searcheTeams.get(position).getDistance()))+" Km");
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                if(searcheTeams.get(position).getTeamLogoUrl()!=null&&!searcheTeams.get(position).getTeamLogoUrl().equalsIgnoreCase("")){
+                    Glide.with(mContext).load(searcheTeams.get(position).getTeamLogoUrl()).into(holder.ivTeamLogo);
+
+                }else{
+                    if(searcheTeams.get(position).getTeamName()!=null&&!searcheTeams.get(position).getTeamName().equalsIgnoreCase("")) {
+                        TextDrawable drawable = TextDrawable.builder()
+                                .beginConfig()
+                                .withBorder(4) /* thickness in px */
+                                .endConfig()
+                                .buildRoundRect("" + searcheTeams.get(position).getTeamName().charAt(0), ContextCompat.getColor(mContext, R.color.colorPrimary), 10);
+                        holder.ivTeamLogo.setImageDrawable(drawable);
+                    }
+                }
                 break;
             case  ADD_VIEW:
                 // Set its video options.
@@ -120,12 +153,22 @@ holder.itemView.setOnClickListener(new View.OnClickListener() {
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private  NativeExpressAdView adView;
+        private  TextView tv_time;
         private  CardView cardView;
+        private final TextView tvTeamDistance;
+        private final ImageView ivTeamLogo;
+        private final TextView tvTeamLocation;
+        private final TextView tvTeamName;
 
         public MyViewHolder(View itemView) {
             super(itemView);
+            tvTeamDistance= (TextView)itemView.findViewById(R.id.tvTeamDistance);
+            tvTeamName= (TextView)itemView.findViewById(R.id.tvTeamName);
+            tvTeamLocation= (TextView)itemView.findViewById(R.id.tvTeamLocation);
+            ivTeamLogo= (ImageView)itemView.findViewById(R.id.ivTeamLogo);
             cardView= (CardView)itemView.findViewById(R.id.cardView);
             adView= (NativeExpressAdView)itemView.findViewById(R.id.adView);
+            tv_time= (TextView)itemView.findViewById(R.id.tv_time);
         }
     }
 }

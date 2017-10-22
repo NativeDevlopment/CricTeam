@@ -1,7 +1,9 @@
 package com.cricteam;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -11,11 +13,13 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.cricteam.fragment.UserAccountFragment;
 import com.cricteam.listner.OnFragmentInteractionListener;
 
 import com.cricteam.fragment.CreateTeamFragment;
+import com.cricteam.model.ResultCancel;
 import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -52,24 +57,25 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
     private Toolbar toolbar;
     private TextView titleHeader;
     private String TAG = CreateTeamActivity.class.getSimpleName();
-
+   public Fragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_team);
-        getAddressAndEnableLocation();
+       // getAddressAndEnableLocation();
 
-
+fragment=UserAccountFragment.newInstance("", "");
         if (getIntent() != null) {
             if (getIntent().getStringExtra(AppConstants.FROM_ACCOUNT_SCREEN) != null) {
-                getSupportFragmentManager().beginTransaction().add(R.id.llContainer, CreateTeamFragment.newInstance(AppConstants.FROM_ACCOUNT_SCREEN, ""), "CreateTeamFragment").commit();
+                fragment=CreateTeamFragment.newInstance(AppConstants.FROM_ACCOUNT_SCREEN, "");
+                getSupportFragmentManager().beginTransaction().add(R.id.llContainer,fragment , "CreateTeamFragment").commit();
 
             } else {
-                getSupportFragmentManager().beginTransaction().add(R.id.llContainer, UserAccountFragment.newInstance("", ""), "UserAccountFragment").commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.llContainer,fragment , "UserAccountFragment").commit();
 
             }
         } else {
-            getSupportFragmentManager().beginTransaction().add(R.id.llContainer, UserAccountFragment.newInstance("", ""), "UserAccountFragment").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.llContainer, fragment, "UserAccountFragment").commit();
 
         }
         //setHeader();
@@ -84,9 +90,9 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
         mGoogleApiClient.connect();
 
         if(CommonUtils.getGpsEnabled(this)){
-            getPlaceLocation();
-        }
+        getPlaceLocation();
     }
+}
 
 
     @Override
@@ -101,13 +107,32 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
             case REQUEST_LOCATION:
                 switch (resultCode) {
                     case Activity.RESULT_OK: {
-                        getPlaceLocation();
+                        if(CommonUtils.isOnline(CreateTeamActivity.this)){
+                            if( fragment instanceof CreateTeamFragment){
+                                ((CreateTeamFragment)fragment).textLabel.setVisibility(View.VISIBLE);
+                            }
+                            if( fragment instanceof UserAccountFragment){
+                                ((UserAccountFragment)fragment).textLabel.setVisibility(View.VISIBLE);
+                            }
+                        getPlaceLocation();}else {
+                            CommonUtils.showToast(CreateTeamActivity.this,"Please Check Network Connection");
+                        }
+
                         // All required changes were successfully made
                         //   Toast.makeText(MainActivity.this, "Location enabled by user!", Toast.LENGTH_LONG).show();
                         break;
                     }
                     case Activity.RESULT_CANCELED: {
-                        // The user was asked to change settings, but chose not to
+                        if( fragment instanceof CreateTeamFragment){
+                            ((CreateTeamFragment)fragment).textLabel.setVisibility(View.INVISIBLE);
+                            ShowMessage(CreateTeamActivity.this,"Please Click On Location Icon For Add Team Address");
+
+                        }
+                        if( fragment instanceof UserAccountFragment){
+                            ((UserAccountFragment)fragment).textLabel.setVisibility(View.INVISIBLE);
+                            ShowMessage(CreateTeamActivity.this,"Please Click On Location Icon For Add User Address");
+
+                        }                        // The user was asked to change settings, but chose not to
                         // Toast.makeText(MainActivity.this, "Location not enabled, user cancelled.", Toast.LENGTH_LONG).show();
                         break;
                     }
@@ -117,9 +142,9 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
                 }
                 break;
         }
-        if(getSupportFragmentManager().getFragments().size()>0){
-            getSupportFragmentManager().getFragments().get(0).onActivityResult(requestCode,resultCode,data);
-        }
+        if(fragment!=null)
+           fragment.onActivityResult(requestCode,resultCode,data);
+
     }
 
     private void setHeader() {
@@ -130,10 +155,27 @@ public class CreateTeamActivity extends AppCompatActivity implements OnFragmentI
         toolbar.setTitle("");
 
     }
+    void ShowMessage (Context context ,String message){
+
+        AlertDialog.Builder builder= new AlertDialog.Builder(context).setMessage(message).
+                setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        builder.show();
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+
+    }
+
+    @Override
+    public void onFragmentInteractions(Fragment sfragment) {
+        fragment=sfragment;
     }
 
     @Override

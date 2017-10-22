@@ -1,5 +1,5 @@
 <resources>
-<string name="AddMobAppId">ca-app-pub-6188430950445846~6237245453</string>
+    <string name="AddMobAppId">ca-app-pub-6188430950445846~6237245453</string>
     <string name="app_name">CricTeam</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -27,9 +27,10 @@
     <string name="resend"><u>RESEND</u></string>
     <string name="_20_ratings_3_reviews">20 ratings 3 review</string>
     <string name="skip"><u>Skip</u></string>
-    <string name="invite_sports_lover_to_join_app">Invite Sports Lover to join App</string>
+    <string name="invite_sports_lover_to_join_app">Share the App </string>
     <string name="do_you_want_to_create_team">Do You want to Create Team</string>
     <string name="my_team">My Team</string>
     <string name="otp_has_been_sent_to_your_mobile_number">Otp has been sent to your mobile number</string>
     <string name="create_team">Create Team</string>
+    <string name="title_activity_searchd_location">Map</string>
 </resources>

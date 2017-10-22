@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.content.res.AppCompatResources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +24,38 @@ import android.widget.Toast;
 import com.cricteam.CreateTeamActivity;
 import com.cricteam.DashBordActivity;
 import com.cricteam.imagepicker.ImagePicker;
+import com.cricteam.imagepicker.utils.CropImage;
+import com.cricteam.imagepicker.utils.TakePictureUtils;
+import com.cricteam.listner.OnApiResponse;
 import com.cricteam.listner.OnFragmentInteractionListener;
 import com.cricteam.R;
+import com.cricteam.netwokmodel.APIExecutor;
+import com.cricteam.netwokmodel.NetWorkApiCall;
+import com.cricteam.netwokmodel.Response;
+import com.cricteam.netwokmodel.TeamDetails;
+import com.cricteam.netwokmodel.TeamRequest;
+import com.cricteam.netwokmodel.UserDetails;
+import com.cricteam.netwokmodel.UserDetailsRequest;
+import com.cricteam.utils.AppConstants;
+import com.cricteam.utils.CommonUtils;
+import com.cricteam.utils.DelayedProgressDialog;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
+
+import io.realm.Realm;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +85,12 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
     private ImagePicker ivTeamLogo;
     private TextView titleHeader;
     private TextView titleSkip;
+    public TextView textLabel;
+    private Uri image;
+    private DelayedProgressDialog progressDialog;
+    private StorageReference storageRef;
+    private double teamLat;
+    private double teamLong;
 
     public CreateTeamFragment() {
         // Required empty public constructor
@@ -110,6 +141,8 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
         fbNext.setOnClickListener(this);
          tvlocation.setOnClickListener(this);
         titleSkip.setOnClickListener(this);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference("team");
        //  ivTeamLogo.setOnClickListener(this);
                 return mView;
     }
@@ -118,35 +151,42 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                Place place = PlacePicker.getPlace(mContext,data);
-               if(place!=null){
-                  tvlocation.setText(""+ place.getAddress());
-                String toastMsg = String.format("Place: %s", place.getName());
-                Toast.makeText(mContext, toastMsg, Toast.LENGTH_LONG).show();}
-            }
-        }
+
         switch (requestCode) {
             case PLACE_PICKER_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     Place place = PlacePicker.getPlace(mContext,data);
-                    if(place!=null){
-                        tvlocation.setText(""+ place.getAddress());
-                        String toastMsg = String.format("Place: %s", place.getName());
-                        Toast.makeText(mContext, toastMsg, Toast.LENGTH_LONG).show();}
+                    if(place!=null) {
+                        tvlocation.setText("" + place.getAddress());
+                        teamLat = place.getLatLng().latitude;
+                        teamLong = place.getLatLng().longitude;
+                    }
                 }
                 break;
             case ImagePicker.REQUEST_CAMERA:
                 if (resultCode == Activity.RESULT_OK) {
-                    ivTeamLogo.setImage(data);
+
+                    image = ivTeamLogo.setImage(data);
                 }
                 break;
             case ImagePicker.REQUEST_GALLERY:
                 if (resultCode == Activity.RESULT_OK) {
-                    ivTeamLogo.setImage(data);
+                    image = ivTeamLogo.setImage(data);
                 }
                 break;
+
+            case TakePictureUtils.CROP_FROM_CAMERA:
+                if (resultCode == Activity.RESULT_OK) {
+                    String path = null;
+                    if (data != null) {
+                        path = data.getStringExtra(CropImage.IMAGE_PATH);
+                        image = ivTeamLogo.setCropImage(path);
+                    }
+                    if (path == null) {
+                        Log.e("Path null ", path);
+                        return;
+                    }
+                }
         }
     }
 
@@ -159,6 +199,7 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
         etTeamName=(TextInputEditText)mView.findViewById(R.id.etTeamName);
         ivTeamLogo=(ImagePicker)mView.findViewById(R.id.ivTeamLogo);
         titleSkip=(TextView)mView.findViewById(R.id.titleSkip);
+        textLabel=(TextView)mView.findViewById(R.id.textLabel);
         titleSkip.setVisibility(View.VISIBLE);
         ivTeamLogo.setFragment(this);
         titleHeader=(TextView) mView. findViewById(R.id.titleHeader);
@@ -207,7 +248,14 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
                break;
             case R.id.fbNext:
                 if(!etTeamName.getText().toString().equalsIgnoreCase("")) {
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, AddTeamPlayerFragment.newInstance(mParam1, "")).addToBackStack(null).commit();
+                    if( CommonUtils.isOnline(mContext)){
+                        progressDialog = new DelayedProgressDialog();
+                        progressDialog.show(getChildFragmentManager(), "tag");
+
+                        saveImageToCloud();}else{
+                        CommonUtils.showToast(mContext,"Please Check Network Connection");
+
+                    }
                 }else {
                     Snackbar.make(etTeamName,"Please Enter Team name.",Snackbar.LENGTH_SHORT).show();
                 }
@@ -216,14 +264,104 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
                 Intent  intent= new Intent(mContext, DashBordActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                getActivity().finish();
+                getActivity().finishAffinity();
                break;
 
         }
     }
+
+    private void saveImageToCloud() {
+        if(CommonUtils.isOnline(mContext)){
+        final     TeamRequest request= new TeamRequest();
+            request.setTeamName(etTeamName.getText().toString());
+            request.setTeamAddress(tvlocation.getText().toString());
+            request.setTeamDesc(etAboutTeam.getText().toString());
+            request.setUserId(Integer.valueOf(CommonUtils.getPreferences(mContext,AppConstants.USER_ID)));
+            request.setTeamLat(String.valueOf(teamLat));
+            request.setTeamLong(String.valueOf(teamLong));
+            CommonUtils.savePreferencesString(mContext,AppConstants.CUURENT_LAT,String.valueOf(teamLat));
+            CommonUtils.savePreferencesString(mContext,AppConstants.CUURENT_LANG,String.valueOf(teamLong));
+
+           /* realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    userDetails.setName(et_name.getText().toString());
+                    userDetails.setUserAddress(tv_user_address.getText().toString());
+                    userDetails.setUserEmail(et_Email.getText().toString());
+                    userDetails.setUserLat(userLat);
+                    userDetails.setUserLong(userLong);
+                }
+            });*/
+
+            if (image != null) {
+             String   teamImageName="cricTeam"+etTeamName.getText().toString()+CommonUtils.getPreferences(mContext, AppConstants.USER_ID);
+                StorageReference riversRef = storageRef.child("cricTeam"+teamImageName+".jpg");
+                UploadTask uploadTask = riversRef.putFile(image);
+
+// Register observers to listen for when the download is done or if it fails
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        final       Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Log.e("url", "" + downloadUrl);
+                        request.setTeamLogoUrl(downloadUrl.toString());
+                       /* realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                userDetails.setUserImageUrl(downloadUrl.toString());
+                            }
+                        });*/
+
+                        saveTeam(request);
+                    }
+                });
+            }else {
+                saveTeam(request);
+
+            }
+        }
+    }
+    void   saveTeam(TeamRequest request){
+
+
+        NetWorkApiCall.getInstance().getApiResponse(mContext, APIExecutor.getApiService().saveTeam(request), new OnApiResponse() {
+            @Override
+            public void onResponse(Response response) {
+
+                progressDialog.cancel();
+                if(response!=null){
+                   //final TeamDetails userDetails= new Gson().fromJson(new Gson().toJsonTree(response.data).toString(),TeamDetails.class);
+                 String teamDetails= new Gson().toJsonTree(response.data).toString();
+
+                   /* realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            // Add a person
+
+                            realm.copyToRealmOrUpdate(userDetails);
+
+
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, AddTeamPlayerFragment.newInstance(mParam1, "")).addToBackStack(null).commit();
+
+                        }
+                    });*/
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.llContainer, AddTeamPlayerFragment.newInstance(mParam1, teamDetails)).addToBackStack(null).commit();
+
+                }
+            }
+        });
+    }
     @Subscribe
     public void onEventMainThread( Place place){
         tvlocation.setText(place.getAddress());
+        teamLat=place.getLatLng().latitude;
+        teamLong=place.getLatLng().longitude;
     }
     @Override
     public void onStop() {
@@ -238,6 +376,11 @@ public class CreateTeamFragment extends Fragment implements View.OnClickListener
             if (getActivity() instanceof CreateTeamActivity){
                 ((CreateTeamActivity) getActivity()).getAddressAndEnableLocation();
             }
+        }
+        if(mParam1.equalsIgnoreCase("")){
+
+        }else {
+            titleSkip.setVisibility(View.GONE);
         }
     }
 }

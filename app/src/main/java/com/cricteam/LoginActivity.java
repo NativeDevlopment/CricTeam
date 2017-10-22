@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -34,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cricteam.listner.OnApiResponse;
@@ -44,6 +46,7 @@ import com.cricteam.netwokmodel.Response;
 import com.cricteam.utils.AppConstants;
 import com.cricteam.utils.CommonUtils;
 import com.cricteam.utils.Country;
+import com.cricteam.utils.DelayedProgressDialog;
 import com.cricteam.utils.SearchableListDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -87,11 +90,9 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
     private TextView titleHeader;
     private EditText etMobileNo;
     // The entry points to the Places API.
-    private GeoDataClient mGeoDataClient;
-    private GoogleApiClient mGoogleApiClient;
-    private PlaceDetectionClient mPlaceDetectionClient;
-    private String TAG=LoginActivity.class.getCanonicalName();
 
+    private String TAG=LoginActivity.class.getCanonicalName();
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +100,6 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
         setContentView(R.layout.activity_login);
         // Set up the login form.
       //  setHeader();
-        // Construct a GeoDataClient.
-        mGeoDataClient = Places.getGeoDataClient(this, null);
-        SettingLocationOn(this);
-        // Construct a PlaceDetectionClient.
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
         fbNext = (FloatingActionButton) findViewById(R.id.fbNext);
         tvCountryCode = (TextView) findViewById(R.id.tvCountryCode);
@@ -113,41 +109,12 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
         fbNext.setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
-
+         progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         _searchableListDialog = SearchableListDialog.newInstance
                 (CommonUtils.getLibraryMasterCountriesEnglish());
         _searchableListDialog.setOnSearchableItemClickListener(this);
 
         _searchableListDialog.setTitle("Country Code ");
-
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                .getCurrentPlace(mGoogleApiClient, null);
-        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-            @Override
-            public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                    Log.i(TAG, String.format("Place '%s' has likelihood: %g",
-                            placeLikelihood.getPlace().getName(),
-                            placeLikelihood.getLikelihood()));
-                }
-                likelyPlaces.release();
-            }
-        });
-
-
-
 
     }
 
@@ -186,19 +153,22 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
                 break;
             case R.id.fbNext:
                 if(!etMobileNo.getText().toString().equalsIgnoreCase("")&& etMobileNo.getText().toString().length()==10) {
-                    /*NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(etMobileNo.getText().toString().trim()), new OnApiResponse() {
+                  final  DelayedProgressDialog progressDialog = new DelayedProgressDialog();
+                    progressDialog.show(getSupportFragmentManager(), "tag");
+
+//dismiss or cancel the dialog
+
+                    NetWorkApiCall.getInstance().getApiResponse(this, APIExecutor.getApiService().sendOtp(tvCountryCode.getText().toString().substring(1)+etMobileNo.getText().toString().trim()), new OnApiResponse() {
                         @Override
                         public void onResponse(Response response) {
+                            progressDialog.cancel();
+                            if(response!=null){
                             Intent intent=   new Intent(LoginActivity.this,OtpVerifyActivity.class);
+                                intent.putExtra(AppConstants.OTP,response.data.toString());
                             intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
-                            startActivity(intent);
+                            startActivity(intent);}
                         }
-                    });*/
-
-                    Intent intent=   new Intent(LoginActivity.this,OtpVerifyActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra(AppConstants.MOBILE_NO,tvCountryCode.getText().toString()+"-"+etMobileNo.getText().toString());
-                    startActivity(intent);
+                    });
 
                 }else if (etMobileNo.getText().toString().length()<10){
                     Snackbar.make(etMobileNo,"Please enter the actual mobile number.",Snackbar.LENGTH_SHORT).show();
@@ -208,29 +178,5 @@ public class LoginActivity extends AppCompatActivity implements SearchableListDi
         }
     }
 
-  void  SettingLocationOn(Context context){
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).addApi(Places.GEO_DATA_API)
-              .addApi(Places.PLACE_DETECTION_API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-                    }
-                })
-                .build();
-        mGoogleApiClient.connect();
-    }
 }
 

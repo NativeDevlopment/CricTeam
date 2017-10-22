@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cricteam.R;
+import com.cricteam.adapter.AddPlayerPagerAdapter;
 import com.cricteam.adapter.FindTeamAdapter;
 import com.cricteam.adapter.TeamCircleAdapter;
+import com.cricteam.adapter.TeamCirclePagerAdapter;
 import com.cricteam.listner.OnFragmentInteractionListener;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -45,6 +49,8 @@ public class TeamCircleFragment extends Fragment {
     private FloatingActionButton fbNext;
     private RecyclerView recylerFindTeam;
     private Context mContext;
+    private TabLayout tabLayout;
+    private  ViewPager viewPager;
 
     public TeamCircleFragment() {
         // Required empty public constructor
@@ -85,9 +91,9 @@ public class TeamCircleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        mView= inflater.inflate(R.layout.fragment_find_team, container, false);
+        mView= inflater.inflate(R.layout.fragment_team_circle, container, false);
         initializedId();
-        setAdapter();
+
 
                 return mView;
     }
@@ -106,14 +112,16 @@ public class TeamCircleFragment extends Fragment {
 
     }
 
-    private void setAdapter() {
-        recylerFindTeam.setLayoutManager(new LinearLayoutManager(mContext));
-        recylerFindTeam.setAdapter(new TeamCircleAdapter(mContext));
-    }
+
 
     private void initializedId() {
-        recylerFindTeam=(RecyclerView)mView.findViewById(R.id.recyclerFindTeam);
+        viewPager=(ViewPager)mView.findViewById(R.id.view_pager);
+        tabLayout=(TabLayout)mView.findViewById(R.id.tab_layout);
 
+        viewPager.setAdapter(new TeamCirclePagerAdapter(getChildFragmentManager()));
+
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(2);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

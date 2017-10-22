@@ -8,8 +8,8 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         app:cardCornerRadius="8dp"
@@ -26,17 +26,19 @@
                 android:id="@+id/tvTeamName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:gravity="left"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"                android:gravity="left"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="My eleven"
                 android:layout_toRightOf="@+id/ivTeamLogo"
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:textAppearance="?android:textAppearanceSmall"/>
 
             <ImageView
                 android:id="@+id/ivTeamLogo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@android:color/darker_gray"
                 app:srcCompat="@drawable/ic_person_outline_black_24dp"
                 android:tooltipText="Player pic"
@@ -52,22 +54,26 @@
                 android:text="Noida sec 62"
                 android:layout_toRightOf="@+id/ivTeamLogo"
                 android:layout_below="@+id/tvTeamName"
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:maxLines="2"
+                android:textAppearance="?android:textAppearanceSmall"/>
           <LinearLayout
               android:layout_width="match_parent"
               android:orientation="horizontal"
-              android:layout_below="@+id/ivTeamLogo"
+              android:layout_below="@+id/tvTeamLocation"
               android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/tvTeamDistance"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:gravity="left|center_vertical"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="100 km"
-                android:textAppearance="?android:textAppearanceMedium"/>
+                android:textAppearance="?android:textAppearanceSmall"/>
             <RatingBar
                 style="@style/RatingBar"
                 android:id="@+id/ratingbar"
@@ -93,8 +99,8 @@
                   android:paddingBottom="5dp"
                   android:textColor="@color/white"
                   android:background="@drawable/rounded_rect"
-                  android:textAppearance="?android:textAppearanceSmallInverse"
-                  android:layout_height="match_parent"
+                  android:textAppearance="?android:textAppearanceSmall"
+                  android:layout_height="wrap_content"
                   android:layout_alignTop="@+id/tvTeamDistance" />
           </LinearLayout>
         </RelativeLayout>

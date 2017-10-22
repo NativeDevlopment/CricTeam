@@ -1,7 +1,13 @@
 package com.cricteam.netwokmodel;
-public class UserDetails {
-	
 
+import java.io.Serializable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class UserDetails extends RealmObject implements Serializable{
+
+	@PrimaryKey
 	private int userId;
 	
 	private String mobileNo;

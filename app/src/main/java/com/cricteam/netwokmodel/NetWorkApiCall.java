@@ -3,6 +3,7 @@ package com.cricteam.netwokmodel;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.cricteam.listner.OnApiResponse;
@@ -32,14 +33,20 @@ public class NetWorkApiCall {
 
   public void  getApiResponse (final Context context , Call<Response> call , final OnApiResponse onApiResponse){
 if(CommonUtils.isOnline(context)) {
+  Log.e( "url",""+ call.request().url());
     call.enqueue(new Callback<Response>() {
         @Override
         public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
             System.out.println("API Data" + new Gson().toJson(response.body()));
             if (response != null && response.body() != null) {
                 if (response.body().getStatusCode() == 200) {
-                    onApiResponse.onResponse(response.body());
+                    if(response.body().data!=null){
+                    onApiResponse.onResponse(response.body());}else {
+                        onApiResponse.onResponse(null);
+                        ShowMessage(context, response.body().message);
+                    }
                 } else {
+                    onApiResponse.onResponse(null);
                     ShowMessage(context, response.body().message);
                 }
             }
@@ -47,7 +54,9 @@ if(CommonUtils.isOnline(context)) {
 
         @Override
         public void onFailure(Call<Response> call, Throwable t) {
+
             onApiResponse.onResponse(null);
+            ShowMessage(context, "Server not responding");
         }
     });
 }else{

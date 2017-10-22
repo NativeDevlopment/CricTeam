@@ -99,6 +99,21 @@ ImageView addNew;
 
         return path;
     }
+    public ImageView getImageView(){
+        return  addNew;
+    }
+    public void setwebImage(String croppath) {
+
+
+
+        Glide.with(getContext()).load(croppath).override(150, 150).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(addNew);
+
+
+
+        Log.e("path",croppath.toString());
+
+
+    }
     public Uri setImage(Intent imageReturnedIntent) {
         Uri path;
         if(imageReturnedIntent!=null) {
